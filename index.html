@@ -1,0 +1,528 @@
+<!DOCTYPE html>
+<html>
+    <head>
+
+      <meta charset="utf-8">
+      <title>pNN--Strawberry</title>
+
+    </head>
+    <style>
+
+      img {
+
+        display: block;
+        margin-left: auto;
+        margin-right: auto;
+        margin-bottom: 10px;
+
+      }
+      footer {
+
+        position: fixed;
+        left: 0;
+        bottom: 0
+
+      }
+
+
+      #top {
+
+        margin-bottom: 35px;
+
+      }
+
+      #me {
+
+        display: block;
+        margin-left: auto;
+        margin-right: auto;
+        margin-bottom: 5px;
+        border: medium solid rgb(200, 200, 200)
+
+      }
+      #center {
+
+        display: block;
+        width: 175px;
+        margin-left: auto;
+        margin-right: auto
+
+      }
+
+      #done {
+
+        float: right;
+        display: block;
+        border: none;
+        border-radius: 5px;
+        width: 75px;
+        height: 30px;
+        font-size: 14px;
+        color: white;
+        background-image: linear-gradient(to bottom, rgb(0, 200, 0), rgb(0, 150, 0));
+        margin-bottom: 30px
+
+      }
+      #clear {
+
+        display: block;
+        border: none;
+        border-radius: 5px;
+        width: 75px;
+        height: 30px;
+        font-size: 14px;
+        color: black;
+        background-image: linear-gradient(to bottom, rgb(240, 240, 240), rgb(200, 200, 200));
+        margin-bottom: 30px
+
+      }
+      #out {
+
+        width: 500px;
+        text-align: center;
+        display: block;
+        margin-left: auto;
+        margin-right: auto;
+        font-size: 14px;
+        margin-bottom: 70px
+
+      }
+
+      #info {
+
+        width: 500px;
+        text-align: justify;
+        display: block;
+        margin-left: auto;
+        margin-right: auto;
+        font-size: 14px;
+        margin-bottom: 70px
+
+      }
+      #octocat {
+
+        width: 50px
+
+      }
+
+    </style>
+    <body>
+
+      <canvas id="me" width="314px" height="314px" ></canvas>
+      <div id="center" >
+        <button id="done" type="submit" onclick="getImage()" >Done</button>
+        <button id="clear" type="submit" onclick="clearer()" >Clear</button>
+      </div>
+      <p id="out" >click "done" to run</p>
+
+
+      <p id="info" >
+      The network being used (named "Strawberry (v0.0.2)") is a standard backpropagation network trained
+      with 784 input neurons for each pixel, 100 hidden neurons, and 10 output neurons. The network was
+      trained with L2 regularization and Gaussian weight initialization to achieve an accuracy of 98.01%
+      on the MNIST test dataset.
+      <br><br>
+      The network was trained on the MNIST dataset, contiaining a training set of 60,000 images and a test set
+      of 10,000 images. The MNIST images have been size-normalized and centered into a 28×28 grid. The same
+      thing has been done to preprocess the images in the drawing box for increased accuracy.
+      <br>
+      Note: This network is 1.78% short of the world record accuracy of 99.79%.
+      <br><br>
+      The images below are called "gradient maps." They represent which pixels the network
+      is most sensitive to when classifying images. The first row shows the gradient maps of the numbers
+      0-9 in numeric order. The next ten rows represent features that the network is using to classify digits.
+      Many resemble loops or holes that many digits contain within them.
+      </p>
+
+
+      <img id="top" src="https://i.ibb.co/0G4jp4s/strawberry-minimaps.png" >
+
+      <img src="https://i.ibb.co/KF4T9qV/strawberry-minimap-1.png" >
+      <img src="https://i.ibb.co/rwfmHbN/strawberry-minimap-2.png" >
+      <img src="https://i.ibb.co/v10LnZz/strawberry-minimap-3.png" >
+      <img src="https://i.ibb.co/GM7mRTX/strawberry-minimap-4.png" >
+      <img src="https://i.ibb.co/zRSX6SQ/strawberry-minimap-5.png" >
+      <img src="https://i.ibb.co/8jLJ88G/strawberry-minimap-6.png" >
+      <img src="https://i.ibb.co/rtnbfFx/strawberry-minimap-7.png" >
+      <img src="https://i.ibb.co/ChLBcV9/strawberry-minimap-8.png" >
+      <img src="https://i.ibb.co/YjJPX8n/strawberry-minimap-9.png" >
+      <img src="https://i.ibb.co/q5xW67t/strawberry-minimap-10.png" >
+
+      <footer>
+        <a href="https://quantum9innovation.github.io/Neural-Network-Frameworks/" >
+          <img id="octocat" src="https://github.githubassets.com/images/modules/logos_page/GitHub-Mark.png" >
+        </a>
+      </footer>
+
+    </body>
+    <script src="Strawberry JSON" ></script>
+    <script>
+
+    //activation function
+    var sigmoid = function(z)
+    {
+
+      for ( var i = 0; i < z.length; i++ )
+      {
+
+        z[i] = 1/(1+Math.exp(-z[i]))
+
+      }
+
+      return z
+
+    }
+
+
+    //2d dot product
+    var dot = function (w, a)
+    {
+
+      vec = []
+
+      for ( var i = 0; i < w.length; i++ )
+      {
+
+        sum = 0;
+
+        for ( var e = 0; e < a.length; e++ )
+        {
+
+          sum+=parseFloat(w[i][e])*a[e]
+
+        }
+
+        vec.push(sum)
+
+      }
+
+      return vec
+
+    }
+
+    //add 2 matrices together
+    var add = function (m1, m2)
+    {
+
+      for ( var i = 0; i < m1.length; i++ )
+      {
+
+        m1[i] = m1[i]+parseFloat(m2[i])
+
+      }
+
+      return m1
+
+    };
+
+    //feedforward method
+    var feedforward = function(a)
+    {
+
+      /*
+          Takes the dot product of each row (neuron)
+          of each layer to arrive at the final result.
+      */
+
+      //matrix multiplication
+      for ( var i = 0; i < data.biases.length; i++ )
+      {
+
+          a = sigmoid(add(dot(data.weights[i], a), data.biases[i]))
+
+      }
+
+      return a
+
+    }
+
+
+    var c = document.getElementById("me").getContext("2d")
+    var clicks = []
+
+    var refresh = function()
+    {
+
+      c.fillStyle = "rgb(255, 255, 255)"
+      c.fillRect(0, 0, 280, 280)
+
+      c.lineWidth = 12
+      c.strokeStyle = "rgb(0, 0, 0)"
+
+      c.beginPath()
+      c.moveTo(clicks[0][0], clicks[0][1])
+
+      for ( var i = 1; i < clicks.length; i++ )
+      {
+
+        c.lineTo(clicks[i][0], clicks[i][1])
+
+      }
+
+      c.stroke()
+
+    };
+
+    var draw = function (e)
+    {
+
+      if ( e.clientX-c.canvas.offsetLeft < 300 && e.clientY-c.canvas.offsetTop < 300 )
+      {
+
+        clicks.push([e.clientX-c.canvas.offsetLeft, e.clientY-c.canvas.offsetTop])
+
+      }
+      refresh()
+
+    };
+
+    c.canvas.addEventListener("click", draw)
+
+
+    var clearer = function()
+    {
+
+      clicks = []
+      c.fillStyle = "rgb(255, 255, 255)"
+      c.fillRect(0, 0, 280, 280)
+
+    }
+
+    var centerImg = function(img, w, h)
+    {
+
+      var sumX = 0
+      var sumXW = 0
+      var sumY = 0
+      var sumYW = 0
+
+      for ( var x = 0; x < w; x++ )
+      {
+
+        for ( var y = 0; y < h; y++ )
+        {
+
+          sumX+=x*img[4*w*y+h*x]/255
+          sumY+=y*img[4*w*y+h*x]/255
+
+          sumXW+=img[4*w*y+h*x]/255
+          sumYW+=img[4*w*y+h*x]/255
+
+        }
+
+      }
+
+      return [Math.round(sumX/sumXW), Math.round(sumY/sumYW)]
+
+    };
+
+    var getImage = function()
+    {
+
+      var corners = [280, 0, 280, 0]
+
+      for ( var i = 0; i < clicks.length; i++ )
+      {
+
+        if ( clicks[i][0] <= corners[0] )
+        {
+
+          corners[0] = clicks[i][0]
+
+        }
+
+        if ( clicks[i][0] >= corners[1] )
+        {
+
+          corners[1] = clicks[i][0]
+
+        }
+
+        if ( clicks[i][1] <= corners[2] )
+        {
+
+          corners[2] = clicks[i][1]
+
+        }
+
+        if ( clicks[i][1] >= corners[3] )
+        {
+
+          corners[3] = clicks[i][1]
+
+        }
+
+      }
+
+      corners[0] = Math.max(corners[0]-6,0)
+      corners[1] = Math.min(corners[1]+6, 280)
+      corners[2] = Math.max(corners[2]-6,0)
+      corners[3] = Math.min(corners[3]+6, 280)
+
+      var imgObj = c.getImageData(corners[0], corners[2], corners[1], corners[3])
+      var raw = imgObj.data
+
+      var center = centerImg(raw, corners[1]-corners[0], corners[3]-corners[2])
+      var xw = center[0]-corners[1]+corners[0]+center[0]
+      var xh = center[1]-corners[3]+corners[2]+center[1]
+      var ncorners = []
+
+      if (xw < 0)
+      {
+
+        ncorners[0] = corners[0]+xw
+        ncorners[1] = corners[1]
+
+      }
+      else {
+
+        ncorners[0] = corners[0]
+        ncorners[1] = corners[1]+xw
+
+      }
+
+      if (xh < 0)
+      {
+
+        ncorners[2] = corners[2]+xw
+        ncorners[3] = corners[3]
+
+      }
+      else {
+
+        ncorners[2] = corners[2]
+        ncorners[3] = corners[3]+xw
+
+      }
+
+      if ( ncorners[1]-ncorners[0] > ncorners[3]-ncorners[2] )
+      {
+
+        var shrink = ncorners[1]-ncorners[0]-ncorners[3]+ncorners[2]
+        if ( shrink/2%1 === 0 )
+        {
+
+          ncorners[3]+=shrink/2
+          ncorners[2]-=shrink/2
+
+        }
+        else {
+
+          ncorners[3]+=Math.floor(shrink/2)+1
+          ncorners[2]-=Math.floor(shrink/2)
+
+        }
+
+      }
+      else {
+
+        var shrink = ncorners[3]-ncorners[2]-ncorners[1]+ncorners[0]
+        if ( shrink/2%1 === 0 )
+        {
+
+          ncorners[1]+=shrink/2
+          ncorners[0]-=shrink/2
+
+        }
+        else {
+
+          ncorners[1]+=Math.floor(shrink/2)+1
+          ncorners[0]-=Math.floor(shrink/2)
+
+        }
+
+      }
+
+      var squish = Math.round((ncorners[1]-ncorners[0])*4/20)
+      ncorners[0]-=squish
+      ncorners[1]+=squish
+      ncorners[2]-=squish
+      ncorners[3]+=squish
+
+      if ( ncorners[0] < 0 || ncorners[2] < 0 || ncorners[1] > 280 || ncorners[3] > 280 ||
+      !ncorners[0] || !ncorners[2] || !ncorners[1] || !ncorners[3] )
+      {
+
+        el = document.getElementById("out")
+        el.innerHTML = "center/shrink drawing"
+
+      }
+      else {
+
+        imgObj = c.getImageData(ncorners[0], ncorners[2], ncorners[1]-ncorners[0], ncorners[3]-ncorners[2])
+        raw = imgObj.data
+        var scale = ncorners[1]-ncorners[0]
+
+
+        var vec = []
+
+        for ( var iy = 0; iy < 28; iy++ )
+        {
+
+          for ( var ix = 0; ix < 28; ix++ )
+          {
+
+            var sum = 0
+
+            for ( var y = 0; y < scale/28; y++ )
+            {
+
+              for ( var x = 0; x < scale/28; x++ )
+              {
+
+                sum+=raw[scale*4*Math.floor(scale/28*iy+y)+4*Math.floor(scale/28*ix+x)]
+
+              }
+
+            }
+
+            vec.push(1-sum/(255*Math.pow(scale/28, 2)))
+
+          }
+
+        }
+
+        var fullRaw = []
+
+        for ( var i = 0; i < vec.length; i++ )
+        {
+
+          fullRaw.push(255*vec[i])
+          fullRaw.push(255*vec[i])
+          fullRaw.push(255*vec[i])
+          fullRaw.push(255)
+
+        }
+
+        var fullImgData = c.getImageData(281, 281, 28, 28)
+        for ( var i = 0; i < fullRaw.length; i++ ){ fullImgData.data[i] = fullRaw[i] }
+        c.putImageData(fullImgData, 281, 281)
+
+        var outputs = feedforward(vec)
+        var cls = [0, 0]
+        var conf = 0
+        var outSum = 0
+
+        for ( var i = 0; i < outputs.length; i++ )
+        {
+
+          if ( outputs[i] >= cls[1] )
+          {
+
+            cls = [i, outputs[i]]
+
+          }
+          outSum+=outputs[i]
+
+        }
+
+        conf = outputs[cls[0]]/outSum
+        var el = document.getElementById("out")
+        el.innerHTML = "classified as a "+cls[0]+" with "+Math.round(conf*100*100)/100+"% confidence"
+
+      }
+
+    };
+
+    </script>
+</html>
