@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html>
+    <head>
+
+        <meta charset="utf-8">
+        <title>2003 AMC 12A Problem 16</title>
+
+    </head>
+    <style>
+    
+        body {
+            background-color: rgb(0, 0, 0)
+        }
+        img {
+            display: none
+        }
+        #me {
+            margin: auto;
+        }
+    </style>
+    <body>
+
+        <canvas id="me" >Start streaming on a modern browser!</canvas>
+        <img id="pImg" src="file:///C:/Users/Teki/Downloads/2003amc12aP16.png" >
+        <img id="diagram" src="file:///C:/Users/Teki/Downloads/diagram.png" >
+        <img id="diagram1" src="file:///C:/Users/Teki/Downloads/diagram1.jpg" >
+        <img id="diagram2" src="file:///C:/Users/Teki/Downloads/diagram2.jpg" >
+        <img id="diagram3" src="file:///C:/Users/Teki/Downloads/diagram3.jpg" >
+        <img id="text" src="file:///C:/Users/Teki/Downloads/proof.jpg" >
+
+    </body>
+    </script>
+    <script>
+        var el = document.getElementById("me")
+            el.width = window.innerWidth*0.95
+            el.height = window.innerHeight*0.9
+        var c = el.getContext("2d")
+            var w = c.canvas.width
+            var h = c.canvas.height
+        var pImg = document.getElementById("pImg")
+        var diagram = document.getElementById("diagram")
+            var diagram1 = document.getElementById("diagram1")
+            var diagram2 = document.getElementById("diagram2")
+            var diagram3 = document.getElementById("diagram3")
+            var text = document.getElementById("text")
+        var state = 0
+        var maxStates = 4
+        var t = 0
+        var animate = false
+        var graphReset = function()
+        {
+            c.textAlign = "left"
+            c.textBaseline = "bottom"
+        };
+        var zero = function()
+        {
+            graphReset()
+            c.drawImage(pImg, w/2-500, h/2-52, 1000, 104)
+            c.fillStyle = "rgb(255, 255, 255)"
+            c.font = "24px Times New Roman"
+            c.fillText("2003 AMC 12A Problem 16", w/2-500, h/2+102)
+            scShot = c.getImageData(w/2-500, h/2-52, 1000, 104)
+            rawShot = scShot.data
+            for ( var i = 3; i < rawShot.length; i+=4 )
+            {
+                rawShot[i] = 100
+            }
+            c.putImageData(scShot, w/2-500, h/2-52)
+            c.fillStyle = "rgb(0, 0, 0)"
+            c.fillText("Multiple choice options hidden", w/2-490, h/2+35)
+        }
+        var one = function()
+        {
+            if ( t < 255 && animate )
+            {
+                zero()
+                scShot = c.getImageData(w/2-500, h/2-52, 1000, 160)
+                rawShot = scShot.data
+                for ( var i = 3; i < rawShot.length; i+=4 )
+                {
+                    rawShot[i] = 255-t
+                    if ( i <= 416000 )
+                    {
+                        rawShot[i] = 100-100/255*t
+                    }
+                }
+                c.putImageData(scShot, w/2-500, h/2-52)
+                t+=2
+            }
+            if ( t >= 255 )
+            {
+                t = 0
+                animate = false
+            }
+            if ( !animate )
+            {
+                c.drawImage(diagram, 0, h/2-200, 400, 400)
+                c.fillStyle = "rgb(255, 255, 255)"
+                c.font = "20px Times New Roman Italic"
+                c.fillText("*P ", 25, h/2+225)
+                c.font = "20px Times New Roman"
+                c.fillText("is initialized at random anywhere within △", 55, h/2+225)
+                c.font = "20px Times New Roman Italic"
+                c.fillText("ABC", 400, h/2+225)
+                c.font = "36px Times New Roman"
+                c.fillText("Setup/Diagram", w/2, h*1/4)
+                c.fillText("Solution 1: Matching Possibilities", w/2, h*3/8)
+                c.font = "30px Times New Roman Italic"
+                c.fillStyle = "rgb(200, 200, 200)"
+                c.fillText("Solution 2: Geometric Probability", w/2, h*1/2)
+                c.fillText("Solution 3: Analytic", w/2, h*5/8)
+                c.fillText("Putting the Proofs Together", w/2, h*3/4)
+                c.fillText("End/Conclusion", w/2, h*7/8)
+                c.fillStyle = "rgb(40, 125, 255)"
+                c.beginPath()
+                c.moveTo(w/2-20, h*1/4-36)
+                c.lineTo(w/2-20, h*1/4)
+                c.lineTo(w/2-51, h*1/4-18)
+                c.fill()
+            }
+        }
+        var two = function()
+        {
+            if ( t < 255 && animate )
+            {
+                c.save()
+                c.translate(w/2*t/255, (h*1/4+18)*t/255)
+                c.fillStyle = "rgb(40, 125, 255)"
+                c.beginPath()
+                c.moveTo(w/2-20, h*1/4-36)
+                c.lineTo(w/2-20, h*1/4)
+                c.lineTo(w/2-51, h*1/4-18)
+                c.fill()
+                c.restore()
+                t+=2
+            }
+            if ( t >= 255 )
+            {
+                t = 0
+                animate = false
+            }
+            if ( !animate )
+            {
+                c.fillStyle = "rgb(255, 255, 255)"
+                c.font = "48px Times New Roman"
+                c.textAlign = "center"
+                c.textBasline = "middle"
+                c.fillText("Proof via Symmetry", w/2, h/2)
+                c.fillStyle = "rgb(40, 125, 255)"
+                c.beginPath()
+                c.moveTo(w-50, h*1/2-18)
+                c.lineTo(w-50, h*1/2+18)
+                c.lineTo(w-81, h*1/2)
+                c.fill()
+            }
+        };
+        var three = function()
+        {
+            if ( t < 255 && animate )
+            {
+                c.fillStyle = "rgb(255, 255, 255)"
+                c.font = "48px Times New Roman"
+                c.textAlign = "center"
+                c.textBasline = "middle"
+                c.fillText("Proof via Symmetry", w/2*(1-t/255), h/2)
+                t+=2
+            }
+            if ( t >= 255 )
+            {
+                t = 0
+                animate = false
+            }
+            if ( !animate )
+            {
+                c.drawImage(diagram1, 0, h/8, 300, 300)
+                c.drawImage(diagram2, 300, h/8, 300, 300)
+                c.drawImage(diagram3, 600, h/8, 300, 300)
+                c.drawImage(text, 0, h*3/4)
+            }
+        };
+        var change = function()
+        {
+            animate = true
+            state++
+        }
+        var refresh = function()
+        {
+            c.fillStyle = "rgb(0, 0, 0)"
+            c.fillRect(0, 0, w, h)
+            if ( state%maxStates == 0 ){zero()}
+            if ( state%maxStates == 1 ){one()}
+            if ( state%maxStates == 2 ){two()}
+            if ( state%maxStates == 3 ){three()}
+            c.canvas.addEventListener("click", change)
+            window.requestAnimationFrame(refresh)
+        }
+        refresh()
+    </script>
+</html>
