@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html>
+    <head>
+
+      <meta charset="utf-8">
+      <title>Web Stream Demo 2</title>
+
+    </head>
+    <style>
+    
+        body {
+
+            background-color: rgb(0, 0, 0)
+
+        }
+
+
+        #me {
+
+            margin: auto;
+
+        }
+
+    </style>
+    <body>
+
+        <canvas id="me" >Start streaming on a modern browser!</canvas>
+
+    </body>
+    <script>
+
+        var el = document.getElementById("me")
+            el.width = window.innerWidth*0.95
+            el.height = window.innerHeight*0.9
+
+        var c = el.getContext("2d")
+            var w = c.canvas.width
+            var h = c.canvas.height
+
+
+        var f = function(x, y)
+        {
+
+            return Math.exp(x*y)/6*(Math.pow(x, 2)+Math.pow(y, 2))
+
+        };
+
+
+        var x_Ra = [-3, 3]
+        var y_Ra = [-3, 3]
+
+
+        var brightness = function(x, y)
+        {
+
+            return (x-x_Ra[0]+y-y_Ra[0])/(x_Ra[1]-x_Ra[0]+y_Ra[1]-y_Ra[0])
+
+        };
+        var project = function(x, y, z)
+        {
+
+            away = (y-y_Ra[0])/(y_Ra[1]-y_Ra[0])
+            return [1/4*away+(-1/2*away+1)*(x-x_Ra[0])/(x_Ra[1]-x_Ra[0]),away+z]
+
+        };
+
+
+        c.fillStyle = "black"
+        c.fillRect(0, 0, w, h)
+        c.scale(1, -1)
+        c.translate(0, -h)
+
+
+        c.strokeStyle = "white"
+        c.beginPath()
+        c.moveTo(w/4, h/4)
+        c.lineTo(3*w/4, h/4)
+        c.lineTo(5*w/8, 3*h/4)
+        c.lineTo(3*w/8, 3*h/4)
+        c.lineTo(w/4, h/4)
+        c.stroke()
+
+        
+        var evalPts = []
+        var steps = 20
+        var i = 0
+        for ( var x = x_Ra[0]; x <= x_Ra[1]; x+=(x_Ra[1]-x_Ra[0])/steps )
+        {
+
+            evalPts.push([])
+            for ( var y = y_Ra[0]; y <= y_Ra[1]; y+=(y_Ra[1]-y_Ra[0])/steps )
+            {
+
+                evalPts[i].push(f(x, y))
+
+            }
+            i++
+
+        }
+
+        var ix = 0
+        var iy = 0
+        for ( var x = x_Ra[0]; x < x_Ra[1]; x+=(x_Ra[1]-x_Ra[0])/steps )
+        {
+
+            iy = 0
+            for ( var y = y_Ra[0]; y < y_Ra[1]; y+=(y_Ra[1]-y_Ra[0])/steps )
+            {
+
+                light = brightness(x, y)
+                if ( ix%2 == iy%2 )
+                {
+                    
+                    c.fillStyle = "rgba(115, 200, 200,"+light+")"
+                
+                }
+                else {
+                    
+                    c.fillStyle = "rgba(55, 125, 140,"+light+")"
+                
+                }
+                
+                p1 = project(x, y, evalPts[ix][iy])
+                p2 = project(x+(x_Ra[1]-x_Ra[0])/steps, y, evalPts[ix+1][iy])
+                p3 = project(x+(x_Ra[1]-x_Ra[0])/steps, y+(y_Ra[1]-y_Ra[0])/steps, evalPts[ix+1][iy+1])
+                p4 = project(x, y+(y_Ra[1]-y_Ra[0])/steps, evalPts[ix][iy+1])
+                
+                c.beginPath()
+                c.moveTo(w/4+w/2*p1[0], h/4+h/2*p1[1])
+                c.lineTo(w/4+w/2*p2[0], h/4+h/2*p2[1])
+                c.lineTo(w/4+w/2*p3[0], h/4+h/2*p3[1])
+                c.lineTo(w/4+w/2*p4[0], h/4+h/2*p4[1])
+                c.lineTo(w/4+w/2*p1[0], h/4+h/2*p1[1])
+                c.fill()
+                iy++
+
+            }
+
+            ix++
+
+        }
+
+    </script>
+</html>
