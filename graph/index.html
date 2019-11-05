@@ -13,17 +13,29 @@
             background-color: rgb(0, 0, 0)
 
         }
+        p {
+
+            font-family: "times new roman";
+            font-size: 24px;
+            color: white;
+            position: absolute;
+            left: 15px;
+            top: 15px;
+            width: 250px
+
+        }
 
 
         #me {
 
-            margin: auto;
+            margin: auto
 
         }
 
     </style>
     <body>
 
+        <p><em>Taylor Series approximation of sin(xy)</em></p>
         <canvas id="me" >Start streaming on a modern browser!</canvas>
 
     </body>
@@ -75,7 +87,7 @@
         c.scale(1, -1)
         c.translate(0, -h)
 
-
+        
         c.strokeStyle = "white"
         c.beginPath()
         c.moveTo(w/4, h/4)
@@ -84,7 +96,7 @@
         c.lineTo(3*w/8, 3*h/4)
         c.lineTo(w/4, h/4)
         c.stroke()
-
+        
         
         var evalPts = []
         var steps = 20
