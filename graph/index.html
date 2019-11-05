@@ -41,26 +41,31 @@
         var f = function(x, y)
         {
 
-            return Math.exp(x*y)/6*(Math.pow(x, 2)+Math.pow(y, 2))
+            return x*y-Math.pow(x*y, 3)/6+Math.pow(x*y, 5)/120-Math.pow(x*y, 7)/5040
 
         };
 
 
-        var x_Ra = [-3, 3]
-        var y_Ra = [-3, 3]
+        var x_Ra = [-2, 2]
+        var y_Ra = [-2, 2]
+
+        var maxBrightness = 0.75
 
 
-        var brightness = function(x, y)
+        var brightness = function(x, y, z)
         {
 
-            return (x-x_Ra[0]+y-y_Ra[0])/(x_Ra[1]-x_Ra[0]+y_Ra[1]-y_Ra[0])
+            dist = Math.sqrt(Math.pow(x-x_Ra[0], 2)+Math.pow(y-y_Ra[0], 2)+Math.pow(z, 2))
+            avg = (x_Ra[1]-x_Ra[0]+y_Ra[1]-y_Ra[0])/2
+            maxDist = Math.sqrt(Math.pow(x_Ra[1]-x_Ra[0], 2)+Math.pow(y_Ra[1]-y_Ra[0], 2)+Math.pow(avg, 2))
+            return maxBrightness*(1-dist/maxDist)
 
         };
         var project = function(x, y, z)
         {
 
             away = (y-y_Ra[0])/(y_Ra[1]-y_Ra[0])
-            return [1/4*away+(-1/2*away+1)*(x-x_Ra[0])/(x_Ra[1]-x_Ra[0]),away+z]
+            return [1/4*away+(-1/2*away+1)*(x-x_Ra[0])/(x_Ra[1]-x_Ra[0]),away+z*3/4]
 
         };
 
