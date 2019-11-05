@@ -37,7 +37,7 @@
             var w = c.canvas.width
             var h = c.canvas.height
 
-
+  
         var f = function(x, y)
         {
 
@@ -112,7 +112,7 @@
             for ( var y = y_Ra[0]; y < y_Ra[1]; y+=(y_Ra[1]-y_Ra[0])/steps )
             {
 
-                light = brightness(x, y)
+                light = brightness(x, y, evalPts[ix][iy])
                 if ( ix%2 == iy%2 )
                 {
                     
