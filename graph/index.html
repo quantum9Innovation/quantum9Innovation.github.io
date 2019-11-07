@@ -3,7 +3,8 @@
     <head>
 
       <meta charset="utf-8">
-      <title>Featured Graph</title>
+      <title>Grafish</title>
+      <link rel="shortcut icon" href="file:///C:/Users/Teki/Downloads/grafish_favicon.png" >
 
     </head>
     <style>
@@ -58,10 +59,11 @@
         };
 
 
-        var x_Ra = [-2, 2]
-        var y_Ra = [-2, 2]
+        var x_Ra = [-1.5, 1.5]
+        var y_Ra = [-1.5, 1.5]
 
-        var maxBrightness = 0.75
+        var maxBrightness = 1
+        var contrast = 2
 
 
         var brightness = function(x, y, z)
@@ -70,7 +72,7 @@
             dist = Math.sqrt(Math.pow(x-x_Ra[0], 2)+Math.pow(y-y_Ra[0], 2)+Math.pow(z, 2))
             avg = (x_Ra[1]-x_Ra[0]+y_Ra[1]-y_Ra[0])/2
             maxDist = Math.sqrt(Math.pow(x_Ra[1]-x_Ra[0], 2)+Math.pow(y_Ra[1]-y_Ra[0], 2)+Math.pow(avg, 2))
-            return maxBrightness*(1-dist/maxDist)
+            return maxBrightness*Math.pow(1-dist/maxDist, contrast)
 
         };
         var project = function(x, y, z)
@@ -99,7 +101,7 @@
         
         
         var evalPts = []
-        var steps = 20
+        var steps = 64
         var i = 0
         for ( var x = x_Ra[0]; x <= x_Ra[1]; x+=(x_Ra[1]-x_Ra[0])/steps )
         {
