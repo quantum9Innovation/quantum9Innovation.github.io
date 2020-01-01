@@ -3,9 +3,8 @@
     <head>
 
       <meta charset="utf-8">
-      <meta name="viewport" content="width=device-width, initial-scale=1">
-      <title>Grafish</title>
-      <link rel="shortcut icon" href="https://ibb.co/6ywDhbt" >
+      <title>Que | Demo</title>
+      <link rel="shortcut icon" href="file:///C:/Users/Teki/Downloads/grafish_favicon.png" >
 
     </head>
     <style>
@@ -15,19 +14,7 @@
             background-color: rgb(0, 0, 0)
 
         }
-        p {
-
-            font-family: "times new roman";
-            font-size: 24px;
-            color: white;
-            position: absolute;
-            left: 15px;
-            top: 15px;
-            width: 250px
-
-        }
-
-
+   
         #me {
 
             margin: auto
@@ -37,7 +24,6 @@
     </style>
     <body>
 
-        <p><em>Taylor Series approximation of sin(xy)</em></p>
         <canvas id="me" >Start streaming on a modern browser!</canvas>
 
     </body>
@@ -52,20 +38,11 @@
             var h = c.canvas.height
 
   
-        var f = function(x, y)
-        {
-
-            return x*y-Math.pow(x*y, 3)/6+Math.pow(x*y, 5)/120-Math.pow(x*y, 7)/5040
-
-        };
-
-
-         var x_Ra = [-2, 2]
-        var y_Ra = [-2, 2]
+        var x_Ra = [-5, 5]
+        var y_Ra = [-5, 5]
 
         var theta = 0
-        var rotationSpeed = Math.PI/100
-
+        var rotationSpeed = Math.PI/75
         
         var f1 = function(x)
         {return Math.sqrt(-Math.pow(x, 2)+1)}
@@ -154,17 +131,18 @@
         var brightness = function(x, y, z)
         {
 
-            dist = Math.sqrt(Math.pow(x-x_Ra[0], 2)+Math.pow(y-y_Ra[0], 2)+Math.pow(z, 2))
-            avg = (x_Ra[1]-x_Ra[0]+y_Ra[1]-y_Ra[0])/2
-            maxDist = Math.sqrt(Math.pow(x_Ra[1]-x_Ra[0], 2)+Math.pow(y_Ra[1]-y_Ra[0], 2)+Math.pow(avg, 2))
-            return maxDist/Math.pow(dist, 2)
+            avgx = x_Ra[1]/2
+            avgy = y_Ra[1]/2
+            dist = (Math.pow(avgx, 2)+Math.pow(avgy, 2))
+            return dist/Math.max(Math.pow(x, 2)+Math.pow(y, 2)+Math.pow(z, 2), 0.01)
 
         };
         var project2d = function(x, y, z)
         {
 
             away = (y-y_Ra[0])/(y_Ra[1]-y_Ra[0])
-            return [1/4*away+(-1/2*away+1)*(x-x_Ra[0])/(x_Ra[1]-x_Ra[0]),away+z/(y_Ra[1]-y_Ra[0])]
+            avg = (y_Ra[1]-y_Ra[0]+x_Ra[1]-x_Ra[0])/2
+            return [1/4*away+(-1/2*away+1)*(x-x_Ra[0])/(x_Ra[1]-x_Ra[0]),away+z/avg]
 
         }
         var project = function(x, y, z)
@@ -176,27 +154,107 @@
 
 
         var evalPts = []
-        var steps = 64
-        var i = 0
-        for ( var x = x_Ra[0]; x <= x_Ra[1]; x+=(x_Ra[1]-x_Ra[0])/steps )
+        
+        var genEval = function(f, steps)
         {
 
-            evalPts.push([])
-            for ( var y = y_Ra[0]; y <= y_Ra[1]; y+=(y_Ra[1]-y_Ra[0])/steps )
+            evalPts = []
+            var i = 0
+            for ( var x = x_Ra[0]; x <= x_Ra[1]; x+=(x_Ra[1]-x_Ra[0])/steps )
             {
 
-                evalPts[i].push(f(x, y))
+                evalPts.push([])
+                for ( var y = y_Ra[0]; y <= y_Ra[1]; y+=(y_Ra[1]-y_Ra[0])/steps )
+                {
+
+                    evalPts[i].push(f(x, y))
+
+                }
+                i++
 
             }
-            i++
 
         }
 
         c.scale(1, -1)
         c.translate(0, -h)
 
+        var graph = function(f, steps, c1, c2)
+        {
+
+            genEval(f, steps)
+            var ix = 0
+            var iy = 0
+            for ( var x = x_Ra[0]; x < x_Ra[1]; x+=(x_Ra[1]-x_Ra[0])/steps )
+            {
+
+                iy = 0
+                for ( var y = y_Ra[0]; y < y_Ra[1]; y+=(y_Ra[1]-y_Ra[0])/steps )
+                {
+
+                    light = brightness(x, y, evalPts[ix][iy])
+                    if ( ix%2 == iy%2 )
+                    {
+
+                        c.fillStyle = "rgba("+c1[0]+","+c1[1]+","+c1[2]+","+light+")"
+
+                    }
+                    else {
+                        
+                        c.fillStyle = "rgba("+c2[0]+","+c2[1]+","+c2[2]+","+light+")"
+
+                    }
+                    
+                    p1 = project(x, y, evalPts[ix][iy])
+                    p2 = project(x+(x_Ra[1]-x_Ra[0])/steps, y, evalPts[ix+1][iy])
+                    p3 = project(x+(x_Ra[1]-x_Ra[0])/steps, y+(y_Ra[1]-y_Ra[0])/steps, evalPts[ix+1][iy+1])
+                    p4 = project(x, y+(y_Ra[1]-y_Ra[0])/steps, evalPts[ix][iy+1])
+                    
+                    c.beginPath()
+                    c.moveTo(w/4+w/2*p1[0], h/4+h/2*p1[1])
+                    c.lineTo(w/4+w/2*p2[0], h/4+h/2*p2[1])
+                    c.lineTo(w/4+w/2*p3[0], h/4+h/2*p3[1])
+                    c.lineTo(w/4+w/2*p4[0], h/4+h/2*p4[1])
+                    c.lineTo(w/4+w/2*p1[0], h/4+h/2*p1[1])
+                    c.fill()
+                    iy++
+
+                }
+
+                ix++
+
+            }
+
+        }
+
+        
+        var f = function(x, y)
+        {
+
+            return Math.sin(x)*Math.cos(y)
+
+        };
+        var g = function(x, y)
+        {
+
+            return 2*Math.sqrt(Math.pow(x, 2)+Math.pow(y, 2))
+
+        }
+
+        c1 = [255*3/4+255/4*Math.random(), 255*3/4+255/4*Math.random(), 255*3/4+255/4*Math.random()]
+        c1d = [c1[0]-255/4, c1[1]-255/4, c1[2]-255/4]
+        c2 = [255*3/4+255/4*Math.random(), 255*3/4+255/4*Math.random(), 255*3/4+255/4*Math.random()]
+        c2d = [c2[0]-255/4, c2[1]-255/4, c2[2]-255/4]
+
         var refresh = function()
         {
+
+            if ( theta >= 2*Math.PI )
+            {
+
+                theta = 0+theta-2*Math.PI
+
+            }
 
             if ( Math.tan(theta) >= 0 )
             {
@@ -277,57 +335,10 @@
             c.fillStyle = "black"
             c.fillRect(0, 0, w, h)
 
-            c.strokeStyle = "white"
-            c.beginPath()
-            c.moveTo(w/4, h/4)
-            c.lineTo(3*w/4, h/4)
-            c.lineTo(5*w/8, 3*h/4)
-            c.lineTo(3*w/8, 3*h/4)
-            c.lineTo(w/4, h/4)
-            c.stroke()
-
-            var ix = 0
-            var iy = 0
-            for ( var x = x_Ra[0]; x < x_Ra[1]; x+=(x_Ra[1]-x_Ra[0])/steps )
-            {
-
-                iy = 0
-                for ( var y = y_Ra[0]; y < y_Ra[1]; y+=(y_Ra[1]-y_Ra[0])/steps )
-                {
-
-                    light = brightness(x, y, evalPts[ix][iy])
-                    if ( ix%2 == iy%2 )
-                    {
-                        
-                        c.fillStyle = "rgba(115, 200, 200,"+light+")"
-                    
-                    }
-                    else {
-                        
-                        c.fillStyle = "rgba(55, 125, 140,"+light+")"
-                    
-                    }
-                    
-                    p1 = project(x, y, evalPts[ix][iy])
-                    p2 = project(x+(x_Ra[1]-x_Ra[0])/steps, y, evalPts[ix+1][iy])
-                    p3 = project(x+(x_Ra[1]-x_Ra[0])/steps, y+(y_Ra[1]-y_Ra[0])/steps, evalPts[ix+1][iy+1])
-                    p4 = project(x, y+(y_Ra[1]-y_Ra[0])/steps, evalPts[ix][iy+1])
-                    
-                    c.beginPath()
-                    c.moveTo(w/4+w/2*p1[0], h/4+h/2*p1[1])
-                    c.lineTo(w/4+w/2*p2[0], h/4+h/2*p2[1])
-                    c.lineTo(w/4+w/2*p3[0], h/4+h/2*p3[1])
-                    c.lineTo(w/4+w/2*p4[0], h/4+h/2*p4[1])
-                    c.lineTo(w/4+w/2*p1[0], h/4+h/2*p1[1])
-                    c.fill()
-                    iy++
-
-                }
-
-                ix++
-
-            }
            
+            graph(f, 32, c1, c1d)
+            graph(g, 32, c2, c2d)
+
             theta+=rotationSpeed
             window.requestAnimationFrame(refresh)
 
