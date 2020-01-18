@@ -398,8 +398,8 @@
             graph(f)
             if ( k >= 1.5 ){ v = false }
             if ( k <= -1.5 ){ v = true }
-            if ( v ){ k+=0.1 }
-            else { k-=0.1 } 
+            if ( v ){ k+=0.05 }
+            else { k-=0.05 } 
 
             theta+=rotationSpeed
             window.requestAnimationFrame(refresh)
