@@ -291,16 +291,18 @@
         }
 
         
+        var k = 1
         var f = function(x, y)
         {
 
-            return Math.sin(x)*Math.cos(y)
+            return k*Math.sin(x)*Math.cos(y)
 
         };
      
         c1 = [0, 200, 255]
         c1d = [0, 200, 0]
 
+        v = true
         var refresh = function()
         {
 
@@ -391,6 +393,10 @@
             c.fillRect(0, 0, w, h)
 
             graph(f, 32, c1, c1d)
+            if ( k >= 3 ){v = false}
+            if ( k <= -3 ){v = true}
+            if ( v ){k+=0.1}
+            else {k-=0.1}
 
             theta+=rotationSpeed
             window.requestAnimationFrame(refresh)
