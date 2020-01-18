@@ -3,20 +3,22 @@
     <head>
 
       <meta charset="utf-8">
-      <title>Vector Field Demo</title>
-      <link rel="shortcut icon" href="file:///C:/Users/Teki/Downloads/grafish_favicon.png" >
+      <title>Que—vector_field_grapher.js | Demo</title>
+      <link rel="shortcut icon" href="https://i.ibb.co/cQLYqdf/temp.png" >
 
     </head>
     <style>
     
         body {
 
-            background-color: rgb(0, 0, 0)
+            background-color: white;
+            overflow: hidden
 
         }
    
         #me {
 
+            display: block;
             margin: auto
 
         }
@@ -30,18 +32,21 @@
     <script>
 
         var el = document.getElementById("me")
-            el.width = window.innerWidth*0.95
-            el.height = window.innerHeight*0.9
+            el.width = window.innerWidth
+            el.height = window.innerHeight
+            if ( el.width < el.height ){el.height = el.width}
+            else {el.width = el.height}
 
         var c = el.getContext("2d")
             var w = c.canvas.width
             var h = c.canvas.height
 
   
+        var k = 1
         var f = function(x, y, z)
         {
 
-            return [Math.sqrt(Math.abs(x)), Math.sqrt(Math.abs(y)), Math.sqrt(Math.abs(z))]
+            return [k*Math.sqrt(Math.abs(x)), k*Math.sqrt(Math.abs(y)), k*Math.sqrt(Math.abs(z))]
 
         };
 
@@ -57,7 +62,9 @@
         var min = 0.5
 
         var theta = 0
-        var rotationSpeed = Math.PI/75
+        var alpha = 0.5
+        var rotationSpeed = alpha*Math.PI/30
+
         
         var f1 = function(x)
         {return Math.sqrt(-Math.pow(x, 2)+1)}
@@ -202,38 +209,44 @@
         }
 
 
-        var evalPts = []
-        var iy = 0
-        var iz = 0
-        for ( var x = x_Ra[0]; x <= x_Ra[1]; x+=(x_Ra[1]-x_Ra[0])/steps )
-        {
-
-            evalPts.push([])
-            iz = 0
-            for ( var y = y_Ra[0]; y <= y_Ra[1]; y+=(y_Ra[1]-y_Ra[0])/steps )
-            {
-
-                evalPts[iy].push([])
-                for ( var z = z_Ra[0]; z <= z_Ra[1]; z+=(z_Ra[1]-z_Ra[0])/steps )
-                {
-
-                    evalPts[iy][iz].push(f(x, y, z))
-
-                }
-                iz++
-
-            }
-            iy++
-
-        }
-
         c.scale(1, -1)
         c.translate(0, -h)
 
-        
+        var evalPts = []
+        var genEval = function()
+        {
+
+            evalPts = []
+            var iy = 0
+            var iz = 0
+            for ( var x = x_Ra[0]; x <= x_Ra[1]; x+=(x_Ra[1]-x_Ra[0])/steps )
+            {
+
+                evalPts.push([])
+                iz = 0
+                for ( var y = y_Ra[0]; y <= y_Ra[1]; y+=(y_Ra[1]-y_Ra[0])/steps )
+                {
+
+                    evalPts[iy].push([])
+                    for ( var z = z_Ra[0]; z <= z_Ra[1]; z+=(z_Ra[1]-z_Ra[0])/steps )
+                    {
+
+                        evalPts[iy][iz].push(f(x, y, z))
+
+                    }
+                    iz++
+
+                }
+                iy++
+
+            }
+
+        }
+
         var graph = function(f)
         {
 
+            genEval()
             var ix = 0
             var iy = 0
             var iz = 0
@@ -291,6 +304,7 @@
            
         }
 
+        var v = true
         var refresh = function()
         {
 
@@ -338,7 +352,7 @@
 
             }
 
-            var nTheta = theta+Math.PI/2
+            var nTheta = (theta+Math.PI/2)%(2*Math.PI)
             if ( Math.tan(nTheta) >= 0 )
             {
 
@@ -377,17 +391,21 @@
             }
 
 
-            c.fillStyle = "black"
+            c.fillStyle = "white"
             c.fillRect(0, 0, w, h)
+            
             c.lineWidth = 3
-
             graph(f)
+            if ( k >= 1.5 ){ v = false }
+            if ( k <= -1.5 ){ v = true }
+            if ( v ){ k+=0.1 }
+            else { k-=0.1 } 
 
             theta+=rotationSpeed
             window.requestAnimationFrame(refresh)
 
         }
-
+      
         refresh()
 
     </script>
