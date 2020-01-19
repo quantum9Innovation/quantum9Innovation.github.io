@@ -414,8 +414,8 @@
             graph(f, 32, c1, c1d)
             if ( k >= 3 ){v = false}
             if ( k <= -3 ){v = true}
-            if ( v ){k+=0}
-            else {k-=0}
+            if ( v ){k+=0.1}
+            else {k-=0.1}
 
             theta+=rotationSpeed
             window.requestAnimationFrame(refresh)
