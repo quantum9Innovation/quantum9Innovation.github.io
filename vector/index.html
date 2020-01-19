@@ -34,8 +34,14 @@
         var el = document.getElementById("me")
             el.width = window.innerWidth
             el.height = window.innerHeight
-            if ( el.width < el.height ){el.height = el.width}
-            else {el.width = el.height}
+            if ( el.width < el.height )
+            {
+                el.height = 2/3*el.width
+            }
+            else {
+                el.width = el.height
+                el.height*=2/3
+            }
 
         var c = el.getContext("2d")
             var w = c.canvas.width
@@ -398,8 +404,8 @@
             graph(f)
             if ( k >= 1.5 ){ v = false }
             if ( k <= -1.5 ){ v = true }
-            if ( v ){ k+=0.05 }
-            else { k-=0.05 } 
+            if ( v ){ k+=0.025 }
+            else { k-=0.025 } 
 
             theta+=rotationSpeed
             window.requestAnimationFrame(refresh)
