@@ -3,7 +3,7 @@
     <head>
 
       <meta charset="utf-8">
-      <title>Que—surface_grapher.js | Demo</title>
+      <title>Que—surface_plotter.js | Demo</title>
       <link rel="shortcut icon" href="https://i.ibb.co/pLnrDQ5/temp.png" >
 
     </head>
@@ -34,8 +34,15 @@
         var el = document.getElementById("me")
             el.width = window.innerWidth
             el.height = window.innerHeight
-            if ( el.width < el.height ){el.height = el.width}
-            else {el.width = el.height}
+            if ( el.width < el.height )
+            {
+                el.height = 2/3*el.width
+            }
+            else {
+                el.width = el.height
+                el.height*=2/3
+            }
+
 
         var c = el.getContext("2d")
             var w = c.canvas.width
@@ -48,8 +55,8 @@
         var theta = 0
         var alpha = 0.5
         var rotationSpeed = alpha*Math.PI/30
-        var luminosity = 0.25
-        var lightSource = [1, 1]
+        var luminosity = 20
+        var lightSource = [2.5, 2.5, 2.5]
         
         var f1 = function(x)
         {return Math.sqrt(-Math.pow(x, 2)+1)}
@@ -162,16 +169,28 @@
             return r
 
         }
+        var co = function(rad)
+        {
+
+            if ( rad > Math.PI ){ return rad-Math.PI }
+            else if ( rad < -Math.PI ){ return rad+Math.PI }
+            else { return rad }
+
+        }
         var brightness = function(x, y, z, lTheta, lPhi)
         {
 
             avgx = x_Ra[1]/2
             avgy = y_Ra[1]/2
             dist = (Math.pow(avgx, 2)+Math.pow(avgy, 2))
-            displacement = dist/Math.max(Math.pow(x, 2)+Math.pow(y, 2)+Math.pow(z, 2), 0.01)
-            angLTheta = 1/Math.max(Math.pow(lightSource[0]-lTheta, 2), 0.01)
-            angLPhi = 1/Math.max(Math.pow(lightSource[1]-lPhi, 2), 0.01)
-            return mini(mini(displacement)*mini(angLTheta)*mini(angLPhi)+luminosity)
+            displacement = dist/Math.max(Math.pow(x-lightSource[0], 2)+Math.pow(y-lightSource[1], 2)+
+            Math.pow(z-lightSource[2], 2), 0.01)
+            angSTheta = -co(Math.atan(lightSource[1]/Math.max(lightSource[0],0.01)))
+            distL = Math.sqrt(Math.pow(lightSource[0], 2)+Math.pow(lightSource[1], 2))
+            angSPhi = -co(Math.atan(lightSource[2]/Math.max(distL, 0.01)))
+            angLTheta = 1/Math.max(Math.pow(angSTheta-co(lTheta), 2), 0.01)
+            angLPhi = 1/Math.max(Math.pow(angSPhi-co(lPhi), 2), 0.01)
+            return mini(luminosity*mini(displacement)*mini(angLTheta)*mini(angLPhi))
 
         };
         var project2d = function(x, y, z)
@@ -395,8 +414,8 @@
             graph(f, 32, c1, c1d)
             if ( k >= 3 ){v = false}
             if ( k <= -3 ){v = true}
-            if ( v ){k+=0.1}
-            else {k-=0.1}
+            if ( v ){k+=0}
+            else {k-=0}
 
             theta+=rotationSpeed
             window.requestAnimationFrame(refresh)
