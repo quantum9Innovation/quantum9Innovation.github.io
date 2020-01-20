@@ -62,6 +62,7 @@
 
         var theta = 1
         var alpha = 0.25
+        var beta = 0.01
         var rotationSpeed = alpha*Math.PI/30
 
         var lightSources = [[-1, -1, 0.5], [-1, 1, 0.5], [1, -1, 0.5], [1, 1, 0.5]]
@@ -392,11 +393,23 @@
             if ( v ){ luminosity-=0.01*luminosity }
             else { luminosity+=0.01*luminosity }
 
-            theta+=rotationSpeed
             window.requestAnimationFrame(refresh)
 
         }
 
+        var moveV = false
+        var rotate = function(e)
+        {
+
+            if ( moveV ){ theta+=beta*e.movementX }
+            if ( theta < 0 ){ theta = 2*Math.PI+theta }
+            theta%=2*Math.PI
+
+        }
+       
+        window.addEventListener("mousemove", rotate)
+        window.addEventListener("mousedown", function(){ moveV = true })
+        window.addEventListener("mouseup", function(){ moveV = false })
         refresh()
 
     </script>
