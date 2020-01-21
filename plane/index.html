@@ -73,7 +73,7 @@
         var beta = 0.01
         var rotationSpeed = alpha*Math.PI/30
 
-        var lightSources = [[-1, -1, 0.5], [-1, 1, 0.5], [1, -1, 0.5], [1, 1, 0.5]]
+        var lightSources = [[1, 1, 0.5], [-1, -1, 0.5]]
         var luminosity = 2
         var distW = 2
         var shininess = 2
@@ -202,7 +202,11 @@
 
             var avgx = x_Ra[1]/2
             var avgy = y_Ra[1]/2
-            var dist = (Math.pow(avgx, 2)+Math.pow(avgy, 2))
+            var avgz = 0
+            for ( var i = 0; i < lightSources.length; i++ )
+            {avgz+=lightSources[i][2]}
+            avgz/=lightSources.length
+            var dist = (Math.pow(avgx, 2)+Math.pow(avgy, 2)+Math.pow(avgz, 2))
             var displacements = []
             var angSThetas = []
             var angSPhis = []
