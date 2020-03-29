@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html>
+    <head>
+
+      <meta charset='utf-8'>
+      <title>Disease Simulation</title>
+
+      <link rel='shortcut icon' href='https://specsonline.com/wp-content/uploads/2019/07/008066095695.jpg'>
+
+    </head>
+    <style>
+
+        body {
+            
+            margin: 0px;
+            overflow: hidden
+            
+        }
+
+    </style>
+    <body>
+
+        <canvas id='me' >      
+            Upgrade to a modern browser to view.     
+        </canvas>
+
+    </body>
+    <script>
+
+        var c = document.getElementById('me').getContext("2d")
+        c.canvas.width = window.innerWidth
+        c.canvas.height = window.innerHeight
+        w = c.canvas.width
+        h = c.canvas.height
+        s = Math.min(w, h)
+        
+        
+        var people_cap = 100
+        var boost = 0.01
+        var speedboost = 0.05
+        var radius = 0.05
+        var r_rate = 0.1
+        var i_rate = 0.5
+        var f_rate = 0.2
+        var daycount = 60
+        
+        var people = []
+        for ( var i = 0; i < people_cap; i++ )
+        {
+            people.push([0, Math.random(), Math.random(), 0, 0, false])
+        }
+        people[0][0] = 1
+        people[0][5] = true
+        
+        var count = 0
+        var data = []
+        var trio_data = []
+        
+        var refresh = function()
+        {
+            
+            c.fillStyle = 'black'
+            c.fillRect(0, 0, w, h)
+            c.fillStyle = 'white'
+            
+            c.strokeStyle = 'white'
+            c.strokeRect(w/2 - s * 3/8, h/2 - s * 3/8, s * 3/4, s * 3/4)
+            
+            
+            var infected = 0
+            var trio = [0, 0, 0]
+            
+            for ( var i = 0; i < people_cap; i++ )
+            {
+                
+                if ( people[i][0] == 0 )
+                {
+                    trio[0]++
+                    c.fillStyle = '#27606b'
+                    c.beginPath()
+                    c.arc(w/2 - s * 3/8 + s * 3/4 * people[i][1], h/2 - s * 3/8 + s * 3/4 * people[i][2], 5, 0, 2*Math.PI)
+                    c.fill()
+                }
+                else if ( people[i][0] == 1 )
+                {
+                    trio[1]++
+                    c.fillStyle = '#f5644f'
+                    c.beginPath()
+                    c.arc(w/2 - s * 3/8 + s * 3/4 * people[i][1], h/2 - s * 3/8 + s * 3/4 * people[i][2], 5, 0, 2*Math.PI)
+                    c.fill()
+                    
+                    for ( var j = 0; j < people_cap; j++ )
+                    {
+                        
+                        if ( people[j][0] == 0 && Math.sqrt(Math.pow(people[i][1] - people[j][1], 2) + Math.pow(people[i][2] - people[j][2], 2)) <= radius )
+                        {
+                            var rand = Math.random()
+                            if ( rand <= i_rate )
+                            {
+                                people[j][0] = 1
+                                people[j][5] = true
+                            }
+                        }
+                        
+                    }
+                    
+                    if ( count % daycount == 0 )
+                    {
+                        
+                        var rand = Math.random()
+                        if ( rand <= r_rate )
+                        {    
+                            people[i][0] = 2                  
+                        }
+                        
+                    }
+                    
+                }
+                else if ( people[i][0] == 2 )
+                {
+                    trio[2]++
+                    c.fillStyle = '#3e3e3e'
+                    c.beginPath()
+                    c.arc(w/2 - s * 3/8 + s * 3/4 * people[i][1], h/2 - s * 3/8 + s * 3/4 * people[i][2], 5, 0, 2*Math.PI)
+                    c.fill()
+                }
+                
+                if ( people[i][5] )
+                {
+                    infected++
+                }
+                
+                people[i][1] += boost * people[i][3]
+                people[i][2] += boost * people[i][4]
+                people[i][3] += 2 * speedboost * (Math.random() - 0.5)
+                people[i][4] += 2 * speedboost * (Math.random() - 0.5)
+                
+                if ( people[i][1] < 0 ){
+                    people[i][1] = 0.01
+                    people[i][3] = 0.01
+                }
+                if ( people[i][1] > 1 ){
+                    people[i][1] = 0.99
+                    people[i][3] = -0.01
+                }
+                if ( people[i][2] < 0 ){
+                    people[i][2] = 0.01
+                    people[i][4] = 0.01
+                }
+                if ( people[i][2] > 1 ){
+                    people[i][2] = 0.99
+                    people[i][4] = -0.01
+                }
+                
+            }
+            
+        
+            data.push(infected / people_cap)
+            c.fillStyle = '#f5644f'
+            for ( var i = 0; i < data.length; i++ )
+            {
+                c.fillRect(w / 16 + (w * i) / (8 * data.length), h / 4, w / (8 * data.length), -data[i] * h/8)   
+            }
+            c.font = '36px Times'
+            c.textBaseline = 'top'
+            c.textAlign = 'left'
+            c.fillText(Math.round(100*data[data.length - 1]) + '% Infected', w / 16, h / 4 + 20)
+            
+            trio_data.push(trio)
+            for ( var i = 0; i < data.length; i++ )
+            {
+                c.fillStyle = '#27606b'
+                c.fillRect(w / 16 + (w * i) / (8 * trio_data.length),  h * 3/4, w / (8 * trio_data.length), -trio_data[i][0]/people_cap * h/8)
+                c.fillStyle = '#f5644f'
+                c.fillRect(w / 16 + (w * i) / (8 * trio_data.length),  h * 3/4 - trio_data[i][0]/people_cap * h/8, w / (8 * trio_data.length), -trio_data[i][1]/people_cap * h/8)
+                c.fillStyle = '#3e3e3e'
+                c.fillRect(w / 16 + (w * i) / (8 * trio_data.length),  h * 3/4 - trio_data[i][0]/people_cap * h/8 - trio_data[i][1]/people_cap * h/8, w / (8 * trio_data.length), -trio_data[i][2]/people_cap * h/8)
+            }
+            c.fillStyle = '#27606b'
+            c.font = '36px Times'
+            c.textBaseline = 'top'
+            c.textAlign = 'left'
+            c.fillText('Wheel Chart', w / 16, h * 3/4 + 20)
+            
+            c.fillStyle = '#3e3e3e'
+            c.font = '72px Times'
+            c.textBaseline = 'bottom'
+            c.fillText(Math.round(f_rate * people_cap * data[data.length - 1]) + ' Dead', w * 3/4, h / 4)
+            c.font = '36px Times'
+            c.fillText('Fatalities', w * 3/4, h / 4 + 50)
+            
+            c.fillStyle = '#27606b'
+            c.font = '72px Times'
+            c.textBaseline = 'bottom'
+            c.fillText(trio_data[data.length - 1][0] + ' Left', w * 3/4, h * 3/4)
+            c.font = '36px Times'
+            c.fillText('Uninfected', w * 3/4, h * 3/4 + 50)
+            
+            c.fillStyle = 'white'
+            c.font = '24px Times'
+            c.textAlign  = 'center'
+            c.fillText('Inspired by 3b1b simulations.', w/2, h/2 + s * 3/8 - 36)
+            
+            count++
+            window.requestAnimationFrame(refresh)
+            
+        };
+        
+        refresh()
+
+    </script>
+</html>
