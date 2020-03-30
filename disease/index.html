@@ -27,38 +27,168 @@
     </body>
     <script>
 
+        //get canvas variables
         var c = document.getElementById('me').getContext("2d")
         c.canvas.width = window.innerWidth
         c.canvas.height = window.innerHeight
-        w = c.canvas.width
-        h = c.canvas.height
-        s = Math.min(w, h)
+        var w = c.canvas.width
+        var h = c.canvas.height
+        var s = Math.min(w, h)
         
+        //initialize global variables needed for simulation
+        var infected = 0
+        var trio = [0, 0, 0]
         
-        var people_cap = 100
-        var boost = 0.01
-        var speedboost = 0.05
-        var radius = 0.05
-        var r_rate = 0.1
-        var i_rate = 0.5
-        var f_rate = 0.2
-        var daycount = 60
-        
-        var people = []
-        for ( var i = 0; i < people_cap; i++ )
+        var CreateParticles = function(number, particles, properties)//use this to create an array of particles
         {
-            people.push([0, Math.random(), Math.random(), 0, 0, false])
+            
+            for ( var i = 0; i < number; i++ )
+            {
+                particles.push([Math.random(), Math.random(), 0, 0, ...properties])   
+            }
+            
         }
-        people[0][0] = 1
-        people[0][5] = true
         
-        var count = 0
+        var ReFrame = function(particles, Draw, Compare, Metrics, boost, speedboost, bubble)//call this every frame in the `refresh` function
+        {
+            
+            for ( var i = 0; i < particles.length; i++ )
+            {
+                
+                Draw(particles[i])
+                Metrics(particles[i])
+                
+                particles[i][0] += boost * particles[i][2]
+                particles[i][1] += boost * particles[i][3]
+                
+                particles[i][2] += 2 * speedboost * (Math.random() - 0.5)
+                particles[i][3] += 2 * speedboost * (Math.random() - 0.5)
+                
+                for ( var j = 0; j < particles.length; j++ )
+                {
+                    
+                    if ( i != j )
+                    {
+                        
+                        if ( Math.sqrt(Math.pow(particles[i][0]-particles[j][0], 2)+Math.pow(particles[i][1]-particles[j][1], 2)) <= bubble )
+                        {
+                            particles[i][2] = -particles[i][2]
+                            particles[i][3] = -particles[i][3]
+                        }
+                        
+                    }
+                   
+                    Compare(particles[i], particles[j])
+                    
+                }
+                
+                if ( particles[i][0] < 0 ){
+                    particles[i][0] = 0
+                    particles[i][2] = -particles[i][2]
+                }
+                if ( particles[i][0] > 1 ){
+                    particles[i][0] = 1
+                    particles[i][2] = -particles[i][2]
+                }
+                if ( particles[i][1] < 0 ){
+                    particles[i][1] = 0
+                    particles[i][3] = -particles[i][3]
+                }
+                if ( particles[i][1] > 1 ){
+                    particles[i][1] = 1
+                    particles[i][3] = -particles[i][3]
+                }
+                
+            }
+                
+        }
+        
+        
+        var animate = function(particle)//use a custom animation function to draw particles
+        {
+            
+            //sort particles by category
+            if ( particle[4] == 0 )
+            {
+                //draw using particle x,y positions from the canvas
+                c.fillStyle = '#27606b'
+                c.beginPath()
+                c.arc(w/2 - s * 3/8 + s * 3/4 * particle[0], h/2 - s * 3/8 + s * 3/4 * particle[1], 5, 0, 2*Math.PI)
+                c.fill()
+            }
+            
+            else if ( particle[4] == 1 )
+            {
+                
+                c.fillStyle = '#f5644f'
+                c.beginPath()
+                c.arc(w/2 - s * 3/8 + s * 3/4 * particle[0], h/2 - s * 3/8 + s * 3/4 * particle[1], 5, 0, 2*Math.PI)
+                c.fill()
+                
+                //post-processing
+                var rand = Math.random()
+                if ( rand <= r_rate/r_duration )
+                {    
+                    particle[4] = 2                  
+                }
+                
+            }
+            
+            else if ( particle[4] == 2 )
+            {
+                c.fillStyle = '#3e3e3e'
+                c.beginPath()
+                c.arc(w/2 - s * 3/8 + s * 3/4 * particle[0], h/2 - s * 3/8 + s * 3/4 * particle[1], 5, 0, 2*Math.PI)
+                c.fill()
+            }
+            
+        }
+        
+        var infect = function(carrier, victim)//use a custom function for comparisons between particles
+        {
+            
+            var rand = Math.random()//generate probabilistic models
+            if ( carrier[4] == 1 && victim[4] == 0 && Math.sqrt(Math.pow(carrier[0] - victim[0], 2) + Math.pow(carrier[1] - victim[1], 2)) <= radius && rand <= i_rate/i_duration )//test a condition
+            {
+                
+                victim[4] = 1
+                victim[5] = true
+                
+            }
+            
+        }
+        
+        var getData = function(particle)//get custom metrics from particles to create visualizations (i.e graphs)
+        {
+            
+            if ( particle[5] ){ infected++ }
+            if ( particle[4] == 0 ){ trio[0]++ }
+            if ( particle[4] == 1 ){ trio[1]++ }
+            if ( particle[4] == 2 ){ trio[2]++ }
+            
+        }
+        
+        
+        var people = []//create an empty array
+        var people_cap = 250
+        CreateParticles(people_cap, people, [0, false])//create required amount of particles
+        //change a specific particle's properties
+        people[0][4] = 1
+        people[0][5] = true
+    
+        var radius = 0.075
+        var i_rate = 0.75
+        var i_duration = 15
+        var r_rate = 0.2
+        var r_duration = 15
+        var f_rate = 0.2
         var data = []
         var trio_data = []
         
-        var refresh = function()
+        var refresh = function()//refresh the display
         {
-            
+        
+            //bounding box
             c.fillStyle = 'black'
             c.fillRect(0, 0, w, h)
             c.fillStyle = 'white'
@@ -66,96 +196,25 @@
             c.strokeStyle = 'white'
             c.strokeRect(w/2 - s * 3/8, h/2 - s * 3/8, s * 3/4, s * 3/4)
             
+            //honestly though I would like a bit of the credit ...
+            c.fillStyle = 'white'
+            c.font = '24px Times'
+            c.textAlign  = 'center'
+            c.fillText('Inspired by 3b1b simulations.', w/2, h/2 + s * 3/8 - 36)
+                        
             
-            var infected = 0
-            var trio = [0, 0, 0]
+            //initialize variables for the getData() function
+            infected = 0
+            trio = [0, 0, 0]
             
-            for ( var i = 0; i < people_cap; i++ )
-            {
-                
-                if ( people[i][0] == 0 )
-                {
-                    trio[0]++
-                    c.fillStyle = '#27606b'
-                    c.beginPath()
-                    c.arc(w/2 - s * 3/8 + s * 3/4 * people[i][1], h/2 - s * 3/8 + s * 3/4 * people[i][2], 5, 0, 2*Math.PI)
-                    c.fill()
-                }
-                else if ( people[i][0] == 1 )
-                {
-                    trio[1]++
-                    c.fillStyle = '#f5644f'
-                    c.beginPath()
-                    c.arc(w/2 - s * 3/8 + s * 3/4 * people[i][1], h/2 - s * 3/8 + s * 3/4 * people[i][2], 5, 0, 2*Math.PI)
-                    c.fill()
-                    
-                    for ( var j = 0; j < people_cap; j++ )
-                    {
-                        
-                        if ( people[j][0] == 0 && Math.sqrt(Math.pow(people[i][1] - people[j][1], 2) + Math.pow(people[i][2] - people[j][2], 2)) <= radius )
-                        {
-                            var rand = Math.random()
-                            if ( rand <= i_rate )
-                            {
-                                people[j][0] = 1
-                                people[j][5] = true
-                            }
-                        }
-                        
-                    }
-                    
-                    if ( count % daycount == 0 )
-                    {
-                        
-                        var rand = Math.random()
-                        if ( rand <= r_rate )
-                        {    
-                            people[i][0] = 2                  
-                        }
-                        
-                    }
-                    
-                }
-                else if ( people[i][0] == 2 )
-                {
-                    trio[2]++
-                    c.fillStyle = '#3e3e3e'
-                    c.beginPath()
-                    c.arc(w/2 - s * 3/8 + s * 3/4 * people[i][1], h/2 - s * 3/8 + s * 3/4 * people[i][2], 5, 0, 2*Math.PI)
-                    c.fill()
-                }
-                
-                if ( people[i][5] )
-                {
-                    infected++
-                }
-                
-                people[i][1] += boost * people[i][3]
-                people[i][2] += boost * people[i][4]
-                people[i][3] += 2 * speedboost * (Math.random() - 0.5)
-                people[i][4] += 2 * speedboost * (Math.random() - 0.5)
-                
-                if ( people[i][1] < 0 ){
-                    people[i][1] = 0.01
-                    people[i][3] = 0.01
-                }
-                if ( people[i][1] > 1 ){
-                    people[i][1] = 0.99
-                    people[i][3] = -0.01
-                }
-                if ( people[i][2] < 0 ){
-                    people[i][2] = 0.01
-                    people[i][4] = 0.01
-                }
-                if ( people[i][2] > 1 ){
-                    people[i][2] = 0.99
-                    people[i][4] = -0.01
-                }
-                
-            }
+            ReFrame(people, animate, infect, getData, 0.025, 0.025, 0.01)//draw and change each frame
             
-        
-            data.push(infected / people_cap)
+            //dump variables to an ongoing dataset
+            data.push(infected/people_cap)
+            trio_data.push(trio)
+            
+            
+            //visualizations
             c.fillStyle = '#f5644f'
             for ( var i = 0; i < data.length; i++ )
             {
@@ -166,13 +225,12 @@
             c.textAlign = 'left'
             c.fillText(Math.round(100*data[data.length - 1]) + '% Infected', w / 16, h / 4 + 20)
             
-            trio_data.push(trio)
             for ( var i = 0; i < data.length; i++ )
             {
-                c.fillStyle = '#27606b'
-                c.fillRect(w / 16 + (w * i) / (8 * trio_data.length),  h * 3/4, w / (8 * trio_data.length), -trio_data[i][0]/people_cap * h/8)
                 c.fillStyle = '#f5644f'
-                c.fillRect(w / 16 + (w * i) / (8 * trio_data.length),  h * 3/4 - trio_data[i][0]/people_cap * h/8, w / (8 * trio_data.length), -trio_data[i][1]/people_cap * h/8)
+                c.fillRect(w / 16 + (w * i) / (8 * trio_data.length),  h * 3/4, w / (8 * trio_data.length), -trio_data[i][1]/people_cap * h/8)
+                c.fillStyle = '#27606b'
+                c.fillRect(w / 16 + (w * i) / (8 * trio_data.length),  h * 3/4 - trio_data[i][1]/people_cap * h/8, w / (8 * trio_data.length), -trio_data[i][0]/people_cap * h/8)
                 c.fillStyle = '#3e3e3e'
                 c.fillRect(w / 16 + (w * i) / (8 * trio_data.length),  h * 3/4 - trio_data[i][0]/people_cap * h/8 - trio_data[i][1]/people_cap * h/8, w / (8 * trio_data.length), -trio_data[i][2]/people_cap * h/8)
             }
@@ -195,17 +253,15 @@
             c.fillText(trio_data[data.length - 1][0] + ' Left', w * 3/4, h * 3/4)
             c.font = '36px Times'
             c.fillText('Uninfected', w * 3/4, h * 3/4 + 50)
+
             
-            c.fillStyle = 'white'
-            c.font = '24px Times'
-            c.textAlign  = 'center'
-            c.fillText('Inspired by 3b1b simulations.', w/2, h/2 + s * 3/8 - 36)
-            
-            count++
-            window.requestAnimationFrame(refresh)
-            
-        };
+            if ( data.length < 7000 )
+            {
+                window.requestAnimationFrame(refresh)//reanimate
+            }
         
+        }
+
         refresh()
 
     </script>
