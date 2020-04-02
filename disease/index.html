@@ -38,6 +38,8 @@
         //initialize global variables needed for simulation
         var infected = 0
         var trio = [0, 0, 0]
+        var state = 1
+        var states = 2
         
         var CreateParticles = function(number, particles, properties)//use this to create an array of particles
         {
@@ -142,6 +144,19 @@
                 c.fill()
             }
             
+            //manipulate particles
+            if ( state == 1 )
+            {
+                
+                var rand = Math.random()
+                if ( rand <= shop_rate/shop_duration )
+                {
+                    particle[0] = 0.5
+                    particle[1] = 0.5
+                }
+            
+            }
+                
         }
         
         var infect = function(carrier, victim)//use a custom function for comparisons between particles
@@ -176,14 +191,16 @@
         people[0][4] = 1
         people[0][5] = true
     
-        var radius = 0.075
-        var i_rate = 0.75
-        var i_duration = 15
-        var r_rate = 0.2
-        var r_duration = 15
+        var radius = 0.05
+        var i_rate = 0.1
+        var i_duration = 30
+        var r_rate = 0.07
+        var r_duration = 30
         var f_rate = 0.2
         var data = []
         var trio_data = []
+        var shop_rate = 0.05
+        var shop_duration = 30
         
         var refresh = function()//refresh the display
         {
@@ -191,7 +208,6 @@
             //bounding box
             c.fillStyle = 'black'
             c.fillRect(0, 0, w, h)
-            c.fillStyle = 'white'
             
             c.strokeStyle = 'white'
             c.strokeRect(w/2 - s * 3/8, h/2 - s * 3/8, s * 3/4, s * 3/4)
@@ -200,7 +216,9 @@
             c.fillStyle = 'white'
             c.font = '24px Times'
             c.textAlign  = 'center'
-            c.fillText('Inspired by 3b1b simulations.', w/2, h/2 + s * 3/8 - 36)
+            c.fillText('Inspired by 3b1b simulations.', w/2, h/2 + s * 3/8 - 55)
+            c.font = '14px Times'
+            c.fillText('Click to change simulation type.', w/2, h/2 + s * 3/8 - 36)
                         
             
             //initialize variables for the getData() function
@@ -216,43 +234,84 @@
             
             //visualizations
             c.fillStyle = '#f5644f'
-            for ( var i = 0; i < data.length; i++ )
-            {
-                c.fillRect(w / 16 + (w * i) / (8 * data.length), h / 4, w / (8 * data.length), -data[i] * h/8)   
+            if ( w > h ){
+                
+                for ( var i = 0; i < data.length; i++ )
+                {
+                    c.fillRect(w / 16 + (w * i) / (8 * data.length), h / 4, w / (8 * data.length), -data[i] * h/8)   
+                }
+            
+            }
+            else {
+              
+                for ( var i = 0; i < data.length; i++ )
+                {
+                    c.fillRect(w / 16 + (w * i) / (8 * data.length), h / 6, w / (8 * data.length), -data[i] * h/8)   
+                }
+                
             }
             c.font = '36px Times'
             c.textBaseline = 'top'
             c.textAlign = 'left'
-            c.fillText(Math.round(100*data[data.length - 1]) + '% Infected', w / 16, h / 4 + 20)
+            if ( w > h ){ c.fillText(Math.round(100*data[data.length - 1]) + '% Infected', w / 16, h / 4 + 20) }
+            else { c.fillText(Math.round(100*data[data.length - 1]) + '% Infected', w / 16, h / 6 + 20) }
             
-            for ( var i = 0; i < data.length; i++ )
-            {
-                c.fillStyle = '#f5644f'
-                c.fillRect(w / 16 + (w * i) / (8 * trio_data.length),  h * 3/4, w / (8 * trio_data.length), -trio_data[i][1]/people_cap * h/8)
-                c.fillStyle = '#27606b'
-                c.fillRect(w / 16 + (w * i) / (8 * trio_data.length),  h * 3/4 - trio_data[i][1]/people_cap * h/8, w / (8 * trio_data.length), -trio_data[i][0]/people_cap * h/8)
-                c.fillStyle = '#3e3e3e'
-                c.fillRect(w / 16 + (w * i) / (8 * trio_data.length),  h * 3/4 - trio_data[i][0]/people_cap * h/8 - trio_data[i][1]/people_cap * h/8, w / (8 * trio_data.length), -trio_data[i][2]/people_cap * h/8)
+            if ( w > h ){
+                
+                for ( var i = 0; i < data.length; i++ )
+                {
+                    c.fillStyle = '#f5644f'
+                    c.fillRect(w / 16 + (w * i) / (8 * trio_data.length),  h * 3/4, w / (8 * trio_data.length), -trio_data[i][1]/people_cap * h/8)
+                    c.fillStyle = '#27606b'
+                    c.fillRect(w / 16 + (w * i) / (8 * trio_data.length),  h * 3/4 - trio_data[i][1]/people_cap * h/8, w / (8 * trio_data.length), -trio_data[i][0]/people_cap * h/8)
+                    c.fillStyle = '#3e3e3e'
+                    c.fillRect(w / 16 + (w * i) / (8 * trio_data.length),  h * 3/4 - trio_data[i][0]/people_cap * h/8 - trio_data[i][1]/people_cap * h/8, w / (8 * trio_data.length), -trio_data[i][2]/people_cap * h/8)
+                }
+                
+            }
+            else {
+                
+                for ( var i = 0; i < data.length; i++ )
+                {
+                    c.fillStyle = '#f5644f'
+                    c.fillRect(w / 16 + (w * i) / (8 * trio_data.length),  h * 7/8, w / (8 * trio_data.length), -trio_data[i][1]/people_cap * h/8)
+                    c.fillStyle = '#27606b'
+                    c.fillRect(w / 16 + (w * i) / (8 * trio_data.length),  h * 7/8 - trio_data[i][1]/people_cap * h/8, w / (8 * trio_data.length), -trio_data[i][0]/people_cap * h/8)
+                    c.fillStyle = '#3e3e3e'
+                    c.fillRect(w / 16 + (w * i) / (8 * trio_data.length),  h * 7/8 - trio_data[i][0]/people_cap * h/8 - trio_data[i][1]/people_cap * h/8, w / (8 * trio_data.length), -trio_data[i][2]/people_cap * h/8)
+                }
+                
             }
             c.fillStyle = '#27606b'
             c.font = '36px Times'
             c.textBaseline = 'top'
             c.textAlign = 'left'
-            c.fillText('Wheel Chart', w / 16, h * 3/4 + 20)
+            if ( w > h ){ c.fillText('Wheel Chart', w / 16, h * 3/4 + 20) }
+            else { c.fillText('Wheel Chart', w / 16, h * 7/8 + 20) }
             
             c.fillStyle = '#3e3e3e'
             c.font = '72px Times'
             c.textBaseline = 'bottom'
-            c.fillText(Math.round(f_rate * people_cap * data[data.length - 1]) + ' Dead', w * 3/4, h / 4)
+            if ( w > h ){ c.fillText(Math.round(f_rate * people_cap * data[data.length - 1]) + ' Dead', w * 3/4, h / 4) }
+            else { c.fillText(Math.round(f_rate * people_cap * data[data.length - 1]) + ' Dead', w * 2/3, h / 6) }
             c.font = '36px Times'
-            c.fillText('Fatalities', w * 3/4, h / 4 + 50)
+            if ( w > h ){ c.fillText('Fatalities', w * 3/4, h / 4 + 50) }
+            else { c.fillText('Fatalities', w * 2/3, h / 6 + 50) }
             
             c.fillStyle = '#27606b'
             c.font = '72px Times'
             c.textBaseline = 'bottom'
-            c.fillText(trio_data[data.length - 1][0] + ' Left', w * 3/4, h * 3/4)
+            if ( w > h ){ c.fillText(trio_data[data.length - 1][0] + ' Left', w * 3/4, h * 3/4) }
+            else { c.fillText(trio_data[data.length - 1][0] + ' Left', w * 2/3, h * 7/8) }
             c.font = '36px Times'
-            c.fillText('Uninfected', w * 3/4, h * 3/4 + 50)
+            if ( w > h ){ c.fillText('Uninfected', w * 3/4, h * 3/4 + 50) }
+            else { c.fillText('Uninfected', w * 2/3, h * 7/8 + 50) }
+            
+            if ( state == 1 )
+            {
+                c.fillStyle = 'white'
+                c.fillRect(w/2 - 7.5, h/2 - 7.5, 15, 15)
+            }
 
             
             if ( data.length < 7000 )
@@ -262,7 +321,13 @@
         
         }
 
+        //scene management
         refresh()
+        window.addEventListener("click", function(e){
+            state++
+            if ( state > states - 1 )
+            {state = 0}
+        })
 
     </script>
 </html>
