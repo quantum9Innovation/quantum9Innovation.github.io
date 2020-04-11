@@ -10,11 +10,71 @@
     </head>
     <style>
 
-        body {
+        body {     
             
             margin: 0px;
-            overflow: hidden
+            background: black;
+            overflow-x: hidden
+        
+        }
+        
+        ::-webkit-scrollbar {
+          width: 15px;
+        }
+        ::-webkit-scrollbar-track {
+          background: #333333;
+        }
+        ::-webkit-scrollbar-thumb {
+          background: #555555;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+          background: #777777;
+        }
+        
+        
+        #sliderContainer {
             
+            background: black;
+            margin: 0px;
+            width: 100%;
+            height: 500px
+            
+        }
+        
+        .sliderDescriptions {
+            
+            text-align: center;
+            font-family: serif;
+            font-size: 24px;
+            color: white;
+            margin-bottom: 75px
+            
+        }
+        
+        .slider {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 25%;
+            height: 5px;
+            margin-left: 38%;
+            background: white;
+            margin-bottom: 0px;
+        }
+        .slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 25px;
+            height: 25px;
+            background: #0078d7;
+            cursor: pointer;
+            border-radius: 50%;
+        }
+        .slider::-moz-range-thumb {
+            width: 25px;
+            height: 25px;
+            background: #0078d7;
+            cursor: pointer;
+            border-radius: 50%;
         }
 
     </style>
@@ -23,17 +83,53 @@
         <canvas id='me' >      
             Upgrade to a modern browser to view.     
         </canvas>
+        
+        
+        <div id="sliderContainer" >
+            
+            <input type="range" min="0" max="100" value="38" class="slider" id="speed">
+            <p class="sliderDescriptions" >Speed (1/100-1/20 of the screen)</p>
+            
+            <input type="range" min="0" max="100" value="38" class="slider" id="speed_var">
+            <p class="sliderDescriptions" >Speed Variability (1/100-1/20 of the screen)</p>
+            
+            <input type="range" min="0" max="100" value="23" class="slider" id="radius">
+            <p class="sliderDescriptions" >Infection Radius (0.02-0.15 units)</p>
+            
+            <input type="range" min="0" max="100" value="5" class="slider" id="i_rate">
+            <p class="sliderDescriptions" >Infection Rate (5%-100%)</p>
+            
+            <input type="range" min="0" max="100" value="49" class="slider" id="i_duration">
+            <p class="sliderDescriptions" >Infection Duration (1-60 frames)</p>
+            
+            <input type="range" min="0" max="100" value="3" class="slider" id="r_rate">
+            <p class="sliderDescriptions" >Recovery Rate (0%-75%)</p>
+            
+            <input type="range" min="0" max="100" value="49" class="slider" id="r_duration">
+            <p class="sliderDescriptions" >Recovery Duration (1-60 frames)</p>
+            
+            <input type="range" min="0" max="100" value="20" class="slider" id="f_rate">
+            <p class="sliderDescriptions" >Fatality Rate (0%-100%)</p>
+            
+            <input type="range" min="0" max="100" value="8" class="slider" id="shop_rate">
+            <p class="sliderDescriptions" >Shop Rate (1%-50%)</p>
+            
+            <input type="range" min="0" max="100" value="49" class="slider" id="shop_duration">
+            <p class="sliderDescriptions" >Day Speed (1-60 frames)</p>
+            
+        </div>
 
     </body>
     <script>
 
         //get canvas variables
-        var c = document.getElementById('me').getContext("2d")
+        var c = document.getElementById('me').getContext('2d')
         c.canvas.width = window.innerWidth
         c.canvas.height = window.innerHeight
         var w = c.canvas.width
         var h = c.canvas.height
         var s = Math.min(w, h)
+        
         
         //initialize global variables needed for simulation
         var infected = 0
@@ -190,24 +286,27 @@
         //change a specific particle's properties
         people[0][4] = 1
         people[0][5] = true
-    
-        var radius = 0.05
-        var i_rate = 0.1
-        var i_duration = 30
-        var r_rate = 0.07
-        var r_duration = 30
-        var f_rate = 0.2
+
+        //variables
+        var radius = 0.05 //infection radius
+        var i_rate = 0.1 //infection rate
+        var i_duration = 30 //infection duration
+        var r_rate = 0.07 //recovery rate
+        var r_duration = 30 //recovery duration
+        var f_rate = 0.2 //fatality rate
         var data = []
         var trio_data = []
-        var shop_rate = 0.05
-        var shop_duration = 30
+        var shop_rate = 0.05 //shop rate
+        var shop_duration = 30 //shop duration
+        var speed = 0.025 //speed boost
+        var speed_var = 0.025 //speed variability
         
         var refresh = function()//refresh the display
-        {
-        
+        {    
+            
             //bounding box
             c.fillStyle = 'black'
-            c.fillRect(0, 0, w, h)
+            c.fillRect(0, 0, w, 2*h)
             
             c.strokeStyle = 'white'
             c.strokeRect(w/2 - s * 3/8, h/2 - s * 3/8, s * 3/4, s * 3/4)
@@ -225,7 +324,7 @@
             infected = 0
             trio = [0, 0, 0]
             
-            ReFrame(people, animate, infect, getData, 0.025, 0.025, 0.01)//draw and change each frame
+            ReFrame(people, animate, infect, getData, speed, speed_var, 0.01)//draw and change each frame
             
             //dump variables to an ongoing dataset
             data.push(infected/people_cap)
@@ -314,6 +413,7 @@
             }
 
             
+            //conditional animation stops after a certain time
             if ( data.length < 7000 )
             {
                 window.requestAnimationFrame(refresh)//reanimate
@@ -321,13 +421,61 @@
         
         }
 
+        
         //scene management
-        refresh()
-        window.addEventListener("click", function(e){
+        
+        refresh()  
+        var setup = function()
+        {
+            
+            people = []
+            if ( state == 0 )
+            {
+                CreateParticles(people_cap, people, [0, false])
+                people[0][4] = 1
+                people[0][5] = true 
+                data = []
+                trio_data = []
+            }
+            if ( state == 1 )
+            {
+                CreateParticles(people_cap, people, [0, false])
+                people[0][4] = 1
+                people[0][5] = true
+                data = []
+                trio_data = []
+            }
+            
+            document.getElementById("radius").value = 23
+            document.getElementById("i_rate").value = 5
+            document.getElementById("i_duration").value = 49
+            document.getElementById("r_rate").value = 3
+            document.getElementById("r_duration").value = 49
+            document.getElementById("f_rate").value = 20
+            document.getElementById("shop_rate").value = 8
+            document.getElementById("shop_duration").value = 49
+            document.getElementById("speed").value = 38
+            document.getElementById("speed_var").value = 38
+            
+        }
+        
+        c.canvas.addEventListener("click", function(e){
             state++
             if ( state > states - 1 )
             {state = 0}
+            setup()
         })
+        
+        document.getElementById("speed").oninput = function() { speed = (0.05 - 0.01) * this.value / 100 + 0.01 }
+        document.getElementById("speed_var").oninput = function() { speed_var = (0.05 - 0.01) * this.value / 100 + 0.01 }
+        document.getElementById("radius").oninput = function() { radius = (0.015 - 0.02) * this.value / 100 + 0.02 }
+        document.getElementById("i_rate").oninput = function() { i_rate = (1 - 0.05) * this.value / 100 + 0.05 }
+        document.getElementById("i_duration").oninput = function() { i_duration = (60 - 1) * this.value / 100 + 1 }
+        document.getElementById("r_rate").oninput = function() { r_rate = (0.75 - 0) * this.value / 100 + 0 }
+        document.getElementById("r_duration").oninput = function() { r_duration = (60 - 1) * this.value / 100 + 1 }
+        document.getElementById("f_rate").oninput = function() { f_rate = (0 - 1) * this.value / 100 + 0 }
+        document.getElementById("shop_rate").oninput = function() { shop_rate = (0.5 - 0.01) * this.value / 100 + 0.01 }
+        document.getElementById("shop_duration").oninput = function() { shop_duration = (60 - 1) * this.value / 100 + 1 }
 
     </script>
 </html>
