@@ -116,7 +116,7 @@
             <p class="sliderDescriptions" >Speed (1/100-1/20 of the screen)</p>
             
             <input type="range" min="0" max="100" value="23" class="slider" id="radius">
-            <p class="sliderDescriptions" >Infection Radius (0.01-0.03 units)</p> 
+            <p class="sliderDescriptions" >Infection Radius (0.01-0.2 units)</p> 
             
             <input type="range" min="0" max="100" value="49" class="slider" id="i_duration">
             <p class="sliderDescriptions" >Infection Duration (1-60 frames)</p> 
@@ -166,7 +166,7 @@
         var fatalities = 0//fatality count
         var trio = [0, 0, 0]//data
         var state = 1//simulations
-        var states = 2//number of simulations
+        var states = 3//number of simulations
         
         var CreateParticles = function(number, particles, properties)//use this to create an array of particles
         {
@@ -493,6 +493,14 @@
                 data = []
                 trio_data = []
             }
+            if ( state == 2 )
+            {
+                CreateParticles(people_cap, people, [0, false, 0])
+                people[0][4] = 1
+                people[0][5] = true 
+                data = []
+                trio_data = []
+            }
             
             document.getElementById("radius").value = 23
             document.getElementById("i_rate").value = 5
@@ -516,7 +524,7 @@
         
         document.getElementById("speed").oninput = function() { speed = (0.05 - 0.01) * this.value / 100 + 0.01 }
         document.getElementById("speed_var").oninput = function() { speed_var = (0.05 - 0.01) * this.value / 100 + 0.01 }
-        document.getElementById("radius").oninput = function() { radius = (0.03 - 0.01) * this.value / 100 + 0.01 }
+        document.getElementById("radius").oninput = function() { radius = (0.1 - 0.025) * this.value / 100 + 0.01 }
         document.getElementById("i_rate").oninput = function() { i_rate = (1 - 0.05) * this.value / 100 + 0.05 }
         document.getElementById("i_duration").oninput = function() { i_duration = (60 - 1) * this.value / 100 + 1 }
         document.getElementById("r_rate").oninput = function() { r_rate = (0.75 - 0) * this.value / 100 + 0 }
