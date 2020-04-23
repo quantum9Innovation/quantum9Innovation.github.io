@@ -99,7 +99,7 @@
             <p class="sliderDescriptions" >Speed (1/100-1/20 of the screen)</p>
             
             <input type="range" min="0" max="100" value="23" class="slider" id="radius">
-            <p class="sliderDescriptions" >Infection Radius (0.02-0.15 units)</p> 
+            <p class="sliderDescriptions" >Infection Radius (0.01-0.03 units)</p> 
             
             <input type="range" min="0" max="100" value="49" class="slider" id="i_duration">
             <p class="sliderDescriptions" >Infection Duration (1-60 frames)</p> 
@@ -143,10 +143,11 @@
         
         
         //initialize global variables needed for simulation
-        var infected = 0
-        var trio = [0, 0, 0]
-        var state = 1
-        var states = 2
+        var infected = 0//ever infected
+        var fatalities = 0//fatality count
+        var trio = [0, 0, 0]//data
+        var state = 1//simulations
+        var states = 2//number of simulations
         
         var CreateParticles = function(number, particles, properties)//use this to create an array of particles
         {
@@ -220,7 +221,7 @@
             if ( particle[4] == 0 )
             {
                 //draw using particle x,y positions from the canvas
-                c.fillStyle = '#27606b'
+                c.fillStyle = '#0166b1'
                 c.beginPath()
                 c.arc(w/2 - s * 3/8 + s * 3/4 * particle[0], h/2 - s * 3/8 + s * 3/4 * particle[1], 5, 0, 2*Math.PI)
                 c.fill()
@@ -229,16 +230,31 @@
             else if ( particle[4] == 1 )
             {
                 
-                c.fillStyle = '#f5644f'
-                c.beginPath()
-                c.arc(w/2 - s * 3/8 + s * 3/4 * particle[0], h/2 - s * 3/8 + s * 3/4 * particle[1], 5, 0, 2*Math.PI)
-                c.fill()
+                //corona bottle
+                c.fillStyle = '#eed532'
+                c.fillRect(w/2 - s * 3/8 + s * 3/4 * particle[0], h/2 - s * 3/8 + s * 3/4 * particle[1], 5, 10)
+                c.fillStyle = '#ffffff'
+                c.fillRect(w/2 - s * 3/8 + s * 3/4 * particle[0] + 1, h/2 - s * 3/8 + s * 3/4 * particle[1] + 2, 3, 3)
+                c.fillStyle = '#003580'
+                c.fillRect(w/2 - s * 3/8 + s * 3/4 * particle[0] + 1, h/2 - s * 3/8 + s * 3/4 * particle[1] + 5, 3, 3)
+                c.fillStyle = '#9f9c93'
+                c.fillRect(w/2 - s * 3/8 + s * 3/4 * particle[0] + 1, h/2 - s * 3/8 + s * 3/4 * particle[1] - 3, 3, 3)
                 
                 //post-processing
-                var rand = Math.random()
-                if ( rand <= r_rate/r_duration )
-                {    
-                    particle[4] = 2                  
+                var rand1 = Math.random()
+                if ( rand1 <= r_rate/r_duration )
+                { 
+                    
+                    var rand2 = Math.random()
+                    if ( rand2 <= f_rate )
+                    {
+                        particle[4] = 3  
+                    }
+                    else
+                    {
+                        particle[4] = 2
+                    }
+                    
                 }
                 
             }
@@ -287,6 +303,7 @@
             if ( particle[4] == 0 ){ trio[0]++ }
             if ( particle[4] == 1 ){ trio[1]++ }
             if ( particle[4] == 2 ){ trio[2]++ }
+            if ( particle[4] == 3 ){ fatalities++ }
             
         }
         
@@ -301,10 +318,10 @@
         //variables
         var radius = 0.05 //infection radius
         var i_rate = 0.1 //infection rate
-        var i_duration = 30 //infection duration
+        var i_duration = 15 //infection duration
         var r_rate = 0.07 //recovery rate
         var r_duration = 30 //recovery duration
-        var f_rate = 0.2 //fatality rate
+        var f_rate = 0.25 //fatality rate
         var data = []
         var trio_data = []
         var shop_rate = 0.05 //shop rate
@@ -333,6 +350,7 @@
             
             //initialize variables for the getData() function
             infected = 0
+            fatalities = 0
             trio = [0, 0, 0]
             
             ReFrame(people, animate, infect, getData, speed, speed_var, 0.01)//draw and change each frame
@@ -372,7 +390,7 @@
                 {
                     c.fillStyle = '#f5644f'
                     c.fillRect(w / 16 + (w * i) / (8 * trio_data.length),  h * 3/4, w / (8 * trio_data.length), -trio_data[i][1]/people_cap * h/8)
-                    c.fillStyle = '#27606b'
+                    c.fillStyle = '#0166b1'
                     c.fillRect(w / 16 + (w * i) / (8 * trio_data.length),  h * 3/4 - trio_data[i][1]/people_cap * h/8, w / (8 * trio_data.length), -trio_data[i][0]/people_cap * h/8)
                     c.fillStyle = '#3e3e3e'
                     c.fillRect(w / 16 + (w * i) / (8 * trio_data.length),  h * 3/4 - trio_data[i][0]/people_cap * h/8 - trio_data[i][1]/people_cap * h/8, w / (8 * trio_data.length), -trio_data[i][2]/people_cap * h/8)
@@ -385,14 +403,14 @@
                 {
                     c.fillStyle = '#f5644f'
                     c.fillRect(w / 16 + (w * i) / (8 * trio_data.length),  h * 7/8, w / (8 * trio_data.length), -trio_data[i][1]/people_cap * h/8)
-                    c.fillStyle = '#27606b'
+                    c.fillStyle = '#0166b1'
                     c.fillRect(w / 16 + (w * i) / (8 * trio_data.length),  h * 7/8 - trio_data[i][1]/people_cap * h/8, w / (8 * trio_data.length), -trio_data[i][0]/people_cap * h/8)
                     c.fillStyle = '#3e3e3e'
                     c.fillRect(w / 16 + (w * i) / (8 * trio_data.length),  h * 7/8 - trio_data[i][0]/people_cap * h/8 - trio_data[i][1]/people_cap * h/8, w / (8 * trio_data.length), -trio_data[i][2]/people_cap * h/8)
                 }
                 
             }
-            c.fillStyle = '#27606b'
+            c.fillStyle = '#0166b1'
             c.font = '36px Times'
             c.textBaseline = 'top'
             c.textAlign = 'left'
@@ -402,13 +420,13 @@
             c.fillStyle = '#3e3e3e'
             c.font = '72px Times'
             c.textBaseline = 'bottom'
-            if ( w > h ){ c.fillText(Math.round(f_rate * people_cap * data[data.length - 1]) + ' Dead', w * 3/4, h / 4) }
-            else { c.fillText(Math.round(f_rate * people_cap * data[data.length - 1]) + ' Dead', w * 2/3, h / 6) }
+            if ( w > h ){ c.fillText(fatalities + ' Dead', w * 3/4, h / 4) }
+            else { c.fillText(fatalities + ' Dead', w * 2/3, h / 6) }
             c.font = '36px Times'
             if ( w > h ){ c.fillText('Fatalities', w * 3/4, h / 4 + 50) }
             else { c.fillText('Fatalities', w * 2/3, h / 6 + 50) }
             
-            c.fillStyle = '#27606b'
+            c.fillStyle = '#0166b1'
             c.font = '72px Times'
             c.textBaseline = 'bottom'
             if ( w > h ){ c.fillText(trio_data[data.length - 1][0] + ' Left', w * 3/4, h * 3/4) }
@@ -479,12 +497,12 @@
         
         document.getElementById("speed").oninput = function() { speed = (0.05 - 0.01) * this.value / 100 + 0.01 }
         document.getElementById("speed_var").oninput = function() { speed_var = (0.05 - 0.01) * this.value / 100 + 0.01 }
-        document.getElementById("radius").oninput = function() { radius = (0.015 - 0.02) * this.value / 100 + 0.02 }
+        document.getElementById("radius").oninput = function() { radius = (0.03 - 0.01) * this.value / 100 + 0.01 }
         document.getElementById("i_rate").oninput = function() { i_rate = (1 - 0.05) * this.value / 100 + 0.05 }
         document.getElementById("i_duration").oninput = function() { i_duration = (60 - 1) * this.value / 100 + 1 }
         document.getElementById("r_rate").oninput = function() { r_rate = (0.75 - 0) * this.value / 100 + 0 }
         document.getElementById("r_duration").oninput = function() { r_duration = (60 - 1) * this.value / 100 + 1 }
-        document.getElementById("f_rate").oninput = function() { f_rate = (0 - 1) * this.value / 100 + 0 }
+        document.getElementById("f_rate").oninput = function() { f_rate = (1 - 0) * this.value / 100 + 0 }
         document.getElementById("shop_rate").oninput = function() { shop_rate = (0.5 - 0.01) * this.value / 100 + 0.01 }
         document.getElementById("shop_duration").oninput = function() { shop_duration = (60 - 1) * this.value / 100 + 1 }
 
