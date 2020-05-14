@@ -121,8 +121,8 @@
             <input type="range" min="0" max="100" value="8" class="slider" id="shop_rate">
             <p class="sliderDescriptions" >Shop Rate (1%-50%)</p>
             
-            <input type="range" min="0" max="100" value="5" class="slider" id="travel_rate">
-            <p class="sliderDescriptions" >Travel Rate (1%-10%)</p>
+            <input type="range" min="0" max="100" value="59" class="slider" id="travel_rate">
+            <p class="sliderDescriptions" >Travel Rate (1%-35%)</p>
             
         </div>
         <div id="sliderContainer2" >
@@ -135,6 +135,9 @@
             
             <input type="range" min="0" max="100" value="20" class="slider" id="f_rate">
             <p class="sliderDescriptions" >Fatality Rate (0%-100%)</p>
+            
+            <input type="range" min="0" max="100" value="0" class="slider" id="q_rate">
+            <p class="sliderDescriptions" >Quarantine Rate (0%-80%)</p>
             
         </div>
 
@@ -241,7 +244,7 @@
                     c.fill()
                 }
 
-                else if ( particle[4] == 1 )
+                else if ( particle[4] == 1 && particle[6] == false )
                 {
 
                     //corona bottle
@@ -254,7 +257,16 @@
                     c.fillStyle = '#9f9c93'
                     c.fillRect(w/2 - s * 3/8 + s * 3/4 * particle[0] + 1, h/2 - s * 3/8 + s * 3/4 * particle[1] - 3, 3, 3)
 
+                    
                     //post-processing
+                    var rand = Math.random()
+                    if ( rand <= q_rate/day_length )
+                    { 
+
+                       particle[6] = true
+
+                    }
+                    
                     var rand1 = Math.random()
                     if ( rand1 <= r_rate/r_duration )
                     { 
@@ -302,21 +314,31 @@
                 {
                     c.fillStyle = '#0166b1'
                     c.beginPath()
-                    c.arc(w/2 - s * 3/8 + s * particle[6]/communities[0] * 6/8 + particle[0] * (s * 3/4 * 1/communities[0] - 20), h/2 - s * 3/8 + s * particle[7]/communities[1] * 6/8 + particle[1] * (s * 3/4 * 1/communities[1] - 20), 5, 0, 2*Math.PI)
+                    c.arc(w/2 - s * 3/8 + s * particle[7]/communities[0] * 6/8 + particle[0] * (s * 3/4 * 1/communities[0] - 20), h/2 - s * 3/8 + s * particle[8]/communities[1] * 6/8 + particle[1] * (s * 3/4 * 1/communities[1] - 20), 5, 0, 2*Math.PI)
                     c.fill()
                 }
 
-                else if ( particle[4] == 1 )
+                else if ( particle[4] == 1 && particle[6] == false )
                 {
+                    
                     c.fillStyle = '#eed532'
-                    c.fillRect(w/2 - s * 3/8 + s * particle[6]/communities[0] * 6/8 + particle[0] * (s * 3/4 * 1/communities[0] - 20), h/2 - s * 3/8 + s * particle[7]/communities[1] * 6/8 + particle[1] * (s * 3/4 * 1/communities[1] - 20), 5, 10)
+                    c.fillRect(w/2 - s * 3/8 + s * particle[7]/communities[0] * 6/8 + particle[0] * (s * 3/4 * 1/communities[0] - 20), h/2 - s * 3/8 + s * particle[8]/communities[1] * 6/8 + particle[1] * (s * 3/4 * 1/communities[1] - 20), 5, 10)
                     c.fillStyle = '#ffffff'
-                    c.fillRect(w/2 - s * 3/8 + s * particle[6]/communities[0] * 6/8 + particle[0] * (s * 3/4 * 1/communities[0] - 20) + 1, h/2 - s * 3/8 + s * particle[7]/communities[1] * 6/8 + particle[1] * (s * 3/4 * 1/communities[1] - 20) + 2, 3, 3)
+                    c.fillRect(w/2 - s * 3/8 + s * particle[7]/communities[0] * 6/8 + particle[0] * (s * 3/4 * 1/communities[0] - 20) + 1, h/2 - s * 3/8 + s * particle[8]/communities[1] * 6/8 + particle[1] * (s * 3/4 * 1/communities[1] - 20) + 2, 3, 3)
                     c.fillStyle = '#003580'
-                    c.fillRect(w/2 - s * 3/8 + s * particle[6]/communities[0] * 6/8 + particle[0] * (s * 3/4 * 1/communities[0] - 20) + 1, h/2 - s * 3/8 + s * particle[7]/communities[1] * 6/8 + particle[1] * (s * 3/4 * 1/communities[1] - 20) + 5, 3, 3)
+                    c.fillRect(w/2 - s * 3/8 + s * particle[7]/communities[0] * 6/8 + particle[0] * (s * 3/4 * 1/communities[0] - 20) + 1, h/2 - s * 3/8 + s * particle[8]/communities[1] * 6/8 + particle[1] * (s * 3/4 * 1/communities[1] - 20) + 5, 3, 3)
                     c.fillStyle = '#9f9c93'
-                    c.fillRect(w/2 - s * 3/8 + s * particle[6]/communities[0] * 6/8 + particle[0] * (s * 3/4 * 1/communities[0] - 20) + 1, h/2 - s * 3/8 + s * particle[7]/communities[1] * 6/8 + particle[1] * (s * 3/4 * 1/communities[1] - 20) - 3, 3, 3)
+                    c.fillRect(w/2 - s * 3/8 + s * particle[7]/communities[0] * 6/8 + particle[0] * (s * 3/4 * 1/communities[0] - 20) + 1, h/2 - s * 3/8 + s * particle[8]/communities[1] * 6/8 + particle[1] * (s * 3/4 * 1/communities[1] - 20) - 3, 3, 3)
 
+                    //post-processing
+                    var rand = Math.random()
+                    if ( rand <= q_rate/day_length )
+                    { 
+
+                       particle[6] = true
+
+                    }
+                    
                     //post-processing
                     var rand1 = Math.random()
                     if ( rand1 <= r_rate/r_duration )
@@ -340,7 +362,7 @@
                 {
                     c.fillStyle = '#3e3e3e'
                     c.beginPath()
-                    c.arc(w/2 - s * 3/8 + s * particle[6]/communities[0] * 6/8 + particle[0] * (s * 3/4 * 1/communities[0] - 20), h/2 - s * 3/8 + s * particle[7]/communities[1] * 6/8 + particle[1] * (s * 3/4 * 1/communities[1] - 20), 5, 0, 2*Math.PI)
+                    c.arc(w/2 - s * 3/8 + s * particle[7]/communities[0] * 6/8 + particle[0] * (s * 3/4 * 1/communities[0] - 20), h/2 - s * 3/8 + s * particle[8]/communities[1] * 6/8 + particle[1] * (s * 3/4 * 1/communities[1] - 20), 5, 0, 2*Math.PI)
                     c.fill()
                 }
 
@@ -350,8 +372,8 @@
                 {
                     particle[0] = 0.5
                     particle[1] = 0.5
-                    particle[6] = Math.floor(communities[0] * Math.random())
-                    particle[7] = Math.floor(communities[1] * Math.random())
+                    particle[7] = Math.floor(communities[0] * Math.random())
+                    particle[8] = Math.floor(communities[1] * Math.random())
                 }
                 
             }
@@ -362,7 +384,14 @@
         {
             
             var rand = Math.random()//generate probabilistic models
-            if ( carrier[4] == 1 && victim[4] == 0 && Math.sqrt(Math.pow(carrier[0] - victim[0], 2) + Math.pow(carrier[1] - victim[1], 2)) <= radius && rand <= i_rate/i_duration )//test a condition
+            var valid = true//run validity check
+            
+            if ( state == 2 && carrier[7] != victim[7] || state == 2 && carrier[8] != victim[8] )
+            {
+                valid = false
+            }
+            
+            if ( carrier[4] == 1 && carrier[6] == false && victim[4] == 0 && Math.sqrt(Math.pow(carrier[0] - victim[0], 2) + Math.pow(carrier[1] - victim[1], 2)) <= radius && rand <= i_rate/i_duration && valid )//test a condition
             {
                 
                 victim[4] = 1
@@ -405,7 +434,8 @@
         var speed = 0.025 //speed boost
         var speed_var = 0.025 //speed variability
         var communities = [3, 3]//matrix of communites {x,y}
-        var travel_rate = 0.05 //travel rate
+        var travel_rate = 0.2 //travel rate
+        var q_rate = 0//quarantining
         var bubble_rad = 0.01 //have dots bounce off each other
         
         var refresh = function()//refresh the display
@@ -559,14 +589,14 @@
         
         //scene management
         
-        refresh()  
+        refresh()    
         var setup = function()
         {
             
             people = []
             if ( state == 0 )
             {
-                CreateParticles(people_cap, people, [0, false])
+                CreateParticles(people_cap, people, [0, false, false])
                 people[0][4] = 1
                 people[0][5] = true 
                 data = []
@@ -574,7 +604,7 @@
             }
             if ( state == 1 )
             {
-                CreateParticles(people_cap, people, [0, false])
+                CreateParticles(people_cap, people, [0, false, false])
                 people[0][4] = 1
                 people[0][5] = true
                 data = []
@@ -582,11 +612,11 @@
             }
             if ( state == 2 )
             {
-                CreateParticles(people_cap, people, [0, false, 0, 0])
+                CreateParticles(people_cap, people, [0, false, false, 0, 0])
                 for ( var i = 0; i < people.length; i++ )
                 {
-                    people[i][6] = Math.floor(communities[0] * Math.random())
-                    people[i][7] = Math.floor(communities[1] * Math.random())
+                    people[i][7] = Math.floor(communities[0] * Math.random())
+                    people[i][8] = Math.floor(communities[1] * Math.random())
                 }
                 people[0][4] = 1
                 people[0][5] = true 
@@ -609,7 +639,8 @@
         document.getElementById("r_rate").oninput = function() { r_rate = (0.75 - 0) * this.value / 100 + 0 }
         document.getElementById("f_rate").oninput = function() { f_rate = (1 - 0) * this.value / 100 + 0 }
         document.getElementById("shop_rate").oninput = function() { shop_rate = (0.5 - 0.01) * this.value / 100 + 0.01 }
-        document.getElementById("travel_rate").oninput = function() { travel_rate = (0.1 - 0.01) * this.value / 100 + 0.01 }
+        document.getElementById("travel_rate").oninput = function() { travel_rate = (0.35 - 0.01) * this.value / 100 + 0.01 }
+        document.getElementById("q_rate").oninput = function() { q_rate = (0.8 - 0) * this.value / 100 + 0 }
 
     </script>
 </html>
