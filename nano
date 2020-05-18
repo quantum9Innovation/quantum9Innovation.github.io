@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html>
+    <head>
+
+      <meta charset="utf-8">
+      <title>Word Couch</title>
+
+    </head>
+    <style>
+
+        body {
+
+            background-image: url("https://www.incimages.com/uploaded_files/image/970x450/rey-seven-nm-mZ4Cs2I-unsplash_397351.jpg");
+
+        }
+        textarea {
+
+            resize: none;
+            width: 50%;
+            height: 50vh;
+            display: block;
+            text-align: left;
+            font-size: 14px;
+            font-family: georgia;
+            margin: auto;
+            padding: 15px;
+            margin-top: 15vh;
+            border-color: rgb(0, 127, 185);
+            border-width: 5px;
+
+        }
+
+        input {
+
+            display: block;
+            margin: auto;
+            margin-top: 15px;
+            width: 35%;
+            height: 20px;
+
+        }
+        
+
+        #banner {
+
+            position: absolute;
+            margin-top: 8%;
+            margin-left: 85%;
+            color: white;
+            font-family: georgia;
+            font-size: 24px;
+
+        }
+
+    </style>
+    <body>
+
+        <textarea id="story" placeholder="Start your story ..." spellcheck="false" ></textarea>
+        <input placeholder="Paste format code here" id="format" ></input>
+        <p id="banner" >#NaNoWriMo</p>
+
+    </body>
+    <script>
+
+        story = document.getElementById("story")
+        input = document.getElementById("format")
+        
+        var parseCode = function()
+        {
+
+            code = input.value.split(",")
+            flag = false
+            for ( var i = 0; i < code.length; i++ )
+            {
+
+                if ( flag )
+                {
+
+                    story.style[code[i-1]] = code[i]
+                    flag = false
+
+                }
+
+                if ( i%2 == 0 )
+                {flag = true}
+
+            }
+
+        };
+
+        input.addEventListener("input", parseCode)
+
+    </script>
+</html>
