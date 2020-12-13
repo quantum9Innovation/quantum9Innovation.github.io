@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html>
+    <head>
+
+      <meta charset="utf-8">
+      <title>Amharic Verb Conjugations</title>
+
+      <link rel="shortcut-icon" href="favicon.png">
+
+    </head>
+    
+    <style>
+        
+        body {
+            
+           margin-top: 25vh; 
+            
+        }
+        
+        h1 {
+            
+            font-size: 100px;
+            margin-top: 0px;
+            margin-bottom: 0px;
+            
+        }
+        
+        #subject {
+            
+            float: left;
+            margin-left: 20vw;
+            
+        }
+        
+        #verb {
+            
+            width: 10vw;
+            margin-left: 60vw;
+            
+        }
+        
+        #des-left {
+            
+            float: left;
+            margin-left: 20vw;
+            
+        }
+        
+        #des-right {
+            
+            width: 10vw;
+            margin-left: 60vw;
+            
+        }
+        
+        p {
+            
+            width: 30vw;
+            margin-left: 35vw;
+            text-align: center;
+            margin-top: 25vh;
+            font-size: 20px;
+            
+        }
+        
+    </style>
+    
+    <body>
+        
+        <h1 id='subject'>[Subject]</h1>
+        <h1 id='verb'>[Verb]</h1>
+        <h2 id='des-left' >Subject</h2>
+        <h2 id='des-right' >Verb</h2>
+        <p>Press space to generate a new combo.</p>
+        
+    </body>
+    
+    <script>
+        
+        var subjects = ['እኔ', 'አንተ', 'አንቺ', 'እሱ', 'እሷ', 'እኛ', 'እናንተ', 'እነሱ']
+        var verbs = ['መሮጥ', 'መጻፍ', 'መስራት', 'ማየት', 'ማብራት', 'ማጥፋት', 'ማሰብ', 'ማውራት', 'መዋኘት', 'መጀመር', 'ማውጣት', 'መተኛት', 'ማንበብ', 'ማስቀመጥ', 'መጫወት', 'መዝጋት', 'መፈለግ', 'መኖር', 'መስማት', 'መማር', 'ማወቅ', 'መሄድ', 'መቸረስ', 'ማግኘት', 'መውደቅ', 'መብላት', 'መንዳት', 'መጠጣት', 'መሳል', 'መቁረተ', 'ማምጣት']
+        
+        var random_subject = subjects[Math.floor(Math.random() * subjects.length)] 
+        var random_verb = verbs[Math.floor(Math.random() * verbs.length)] 
+        
+        var html_subject = document.getElementById('subject')
+        var html_verb = document.getElementById('verb')
+        
+        html_subject.innerHTML = random_subject
+        html_verb.innerHTML = random_verb
+        
+        document.body.onkeyup = function(e){
+            if(e.keyCode == 32){
+                
+                random_subject = subjects[Math.floor(Math.random() * subjects.length)] 
+                random_verb = verbs[Math.floor(Math.random() * verbs.length)] 
+
+                html_subject.innerHTML = random_subject
+                html_verb.innerHTML = random_verb
+                
+            }
+        }
+        
+    </script>
+    
+</html>
