@@ -162,6 +162,14 @@
             //Type B (Tested)
             else if ( (new_verb[new_verb.length - 4] == 'y' || new_verb[new_verb.length - 4] == 'ñ') && new_verb[new_verb.length - 3] == 'a' && new_verb[new_verb.length - 2] == 't' && new_verb[new_verb.length - 1] == 'e' ) {
             
+                for ( var i = 0; i < new_verb.length; i++ ) {
+                    
+                    if ( new_verb[i + 1] == 'e' ) {
+                        new_verb.splice(i + 1, 1, 'a')  
+                    }
+                    
+                }
+                
                 for ( var i = 2; i <= new_verb.length - 4; i++ ) {
                     conjugated_verb.push(new_verb[i])
                 }
@@ -248,7 +256,7 @@
                     conjugated_verb.push('e')
                 }
                 if ( subject == 'እኛ' ) {
-                    conjugated_verb.push('e')
+                    conjugated_verb.push('a')
                     conjugated_verb.push('n')
                     conjugated_verb.push('e')
                 }
@@ -381,6 +389,8 @@
                 conjugated_verb.push('ā')
                 conjugated_verb.push('l')
                 conjugated_verb.push('a')
+                conjugated_verb.push('h')
+                conjugated_verb.push('e')
             }
             if ( subject == 'አንቺ' ) {
                 
@@ -720,7 +730,7 @@
                 conjugated_verb.unshift('ā')
                 conjugated_verb.unshift('ʼ')
 
-                conjugated_verb.push('i')
+                conjugated_verb.push('u')
                 conjugated_verb.push('m')
                 conjugated_verb.push('e')
             }
@@ -734,7 +744,7 @@
                 conjugated_verb.unshift('ā')
                 conjugated_verb.unshift('ʼ')
                 
-                conjugated_verb.push('i')
+                conjugated_verb.push('u')
                 conjugated_verb.push('m')
                 conjugated_verb.push('e')
                 
