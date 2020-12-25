@@ -39,15 +39,23 @@
             
         }
         
-        #des-left {
+        .des-left {
             
             margin-left: 20vw;
+            margin-top: 20px;
+            margin-bottom: -15px;
             
         }
         
         #p-head {
         
             margin-top: 25vh;
+            
+        }
+        
+        #goal {
+            
+            color: #0390fc;
             
         }
         
@@ -68,7 +76,8 @@
         
         <h1 id='subject'>[Subject]</h1>
         <h1 id='verb'>[Verb]</h1>
-        <h2 id='des-left' >Subject/Verb</h2>
+        <h2 class='des-left' >Subject/Verb</h2>
+        <h2 class='des-left' id='goal' >Goal (10): 0% Complete</h2>
         <p id='p-head'>Press space to generate a new combo.</p>
         <p>Enter to flip back to infinitive</p>
         <p>1=present progressive, 2=present affirmative, 3=present negative</p>
@@ -79,8 +88,9 @@
     <script>
         
         var subjects = ['እኔ', 'አንተ', 'አንቺ', 'እሱ', 'እሷ', 'እኛ', 'እናንተ', 'እነሱ']
-        var verbs = ['መሮጥ', 'መስራት', 'ማየት', 'ማብራት', 'ማጥፋት', 'ማሰብ', 'ማውራት', 'መዋኘት', 'መጀመር', 'ማውጣት', 'መተኛት', 'ማንበብ', 'ማስቀመጥ', 'መጫወት', 'መዝጋት', 'መፈለግ', 'መኖር', 'መስማት', 'መማር', 'ማወቅ', 'መሄድ', 'መጨረስ', 'ማግኘት', 'መብላት', 'መንዳት', 'መጠጣት', 'ማምጣት', 'መቻል', 'መደወል', 'ማሳይት', 'መቀበል']
-        var possible_irregulars = ['መሳል', 'መቁረተ', 'መጻፍ']
+        var verbs = ['መሮጥ', 'መስራት', 'ማየት', 'ማብራት', 'ማጥፋት', 'ማሰብ', 'ማውራት', 'መዋኘት', 'መጀመር', 'ማውጣት', 'መተኛት', 'ማስቀመጥ', 'መጫወት', 'መዝጋት', 'መፈለግ', 'መኖር', 'መስማት', 'መማር', 'ማወቅ', 'መሄድ', 'መጨረስ', 'ማግኘት', 'መብላት', 'መንዳት', 'ማምጣት', 'መቻል', 'መደወል', 'ማሳየት', 'መቀበል', 'መያዝ', 'መንካት']
+        var possible_irregulars = ['መሳል', 'መቁረተ', 'መጻፍ', 'ማንበብ', 'መጠጣት']
+        var terms_studied = 0
         
         var vowels = ['a', 'u', 'i', 'ā', 'é', 'e', 'o']
         
@@ -791,6 +801,13 @@
                 html_subject.innerHTML = random_subject
                 html_verb.innerHTML = random_verb
                 html_verb.style.color = '#000000'
+                
+                terms_studied++
+                flag = ''
+                if ( terms_studied >= 10 ) {
+                    flag = '⚑ '
+                }
+                document.getElementById('goal').innerHTML = flag+'Goal (10): '+terms_studied * (100/10)+'% Complete'
                 
             }
             
