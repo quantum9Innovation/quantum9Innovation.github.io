@@ -1,154 +1,690 @@
 <!DOCTYPE html>
-<html>
-    <head>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>q9i</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Rubik:wght@700&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200"
+    />
+    <link rel="stylesheet" type="text/css" href="./assets/css/reset.css" />
+    <link rel="stylesheet" type="text/css" href="./index.css" />
+    <link
+      rel="apple-touch-icon"
+      sizes="180x180"
+      href="../static/icons/apple-touch-icon.png"
+    />
+    <link
+      rel="icon"
+      type="image/png"
+      sizes="32x32"
+      href="../static/icons/favicon-32x32.png"
+    />
+    <link
+      rel="icon"
+      type="image/png"
+      sizes="16x16"
+      href="../static/icons/favicon-16x16.png"
+    />
+    <link rel="manifest" href="../static/icons/site.webmanifest" />
+    <script async defer src="./index.js"></script>
+  </head>
 
-      <meta charset="utf-8">
-      <title>MNIST VAE for Zeros</title>
-
-      <link rel="shortcut icon" href="https://i.ibb.co/PNGBS6s/download.png">
-      <meta name="google-site-verification" content="4LABIwyIU1unRNF-wGgB8a4xoVDKsYwJduYnGAARMYY" />
-
-    </head>
-    <style>
-
-        body {
-            
-            margin: 0px;
-            overflow: hidden
-                
-        }
-
-    </style>
-    <body>
-
-        <canvas id="me" >
-            
-            Use a modern browser to explore this visualization
-        
-        </canvas>
-
-    </body>
-    <script src="data.js" ></script>
-    <script src="code.js" ></script>
-    <script>
-
-        var c = document.getElementById("me").getContext("2d")
-        c.canvas.width = window.innerWidth;
-        c.canvas.height = window.innerHeight;
-        
-        var w = c.canvas.width
-        var h = c.canvas.height
-        var s = Math.min(w, h)
-        
-        
-        //activation function
-        var sigmoid = function(z)
-        {
-
-          for ( var i = 0; i < z.length; i++ )
-          {
-
-            z[i] = 1/(1+Math.exp(-z[i]))
-
-          }
-
-          return z
-
-        }
-
-        //2d dot product
-        var dot = function (w, a)
-        {
-
-          var vec = []
-
-          for ( var i = 0; i < w.length; i++ )
-          {
-
-            var sum = 0
-
-            for ( var e = 0; e < a.length; e++ )
-            {
-
-              sum+=parseFloat(w[i][e])*a[e]
-
-            }
-
-            vec.push(sum)
-
-          }
-
-          return vec
-
-        }
-
-        //add 2 matrices together
-        var add = function (m1, m2)
-        {
-
-          for ( var i = 0; i < m1.length; i++ )
-          {
-
-            m1[i] = m1[i]+parseFloat(m2[i])
-
-          }
-
-          return m1
-
-        };
-
-        //feedforward method
-        var feedforward = function(a, data)
-        {
-
-          /*
-              Takes the dot product of each row (neuron)
-              of each layer to arrive at the final result.
-          */
-
-          //matrix multiplication
-          for ( var i = 0; i < data.biases.length; i++ )
-          {
-
-              a = sigmoid(add(dot(data.weights[i], a), data.biases[i]))
-
-          }
-
-          return a
-
-        }
-
-
-        
-        var arr = []
-        
-        for ( var i = 0; i < 30; i++ ){
-            
-            arr.push(Math.random())
-            
-        }
-        
-        var out = feedforward(arr, data)
-        
-        
-        var size = 5
-        var maxSize = size*28
-        
-        for ( var i = 0; i < 784; i++ ) {
-            
-            c.fillStyle = "rgb("+255*out[i]+","+255*out[i]+","+255*out[i]+")"
-            var xPos = Math.floor(w/2-maxSize/2+size*(i-28*Math.floor(i/28)))
-            var yPos = Math.floor(h/2-3*maxSize/2+size*(Math.floor(i/28)))
-            c.fillRect(xPos, yPos, size, size)
-            
-        }
-        
-
-        c.fillStyle = "rgb(0, 0, 0)"
-        c.font = "12px Arial"
-        c.textAlign = "center"
-        c.fillText("Zeros made from a [hacked] variational autoencoder using the MNIST dataset", w/2, h/2)
-        c.fillText("See quantum9Innovation/Neural-Network-Frameworks on Github", w/2, h/2+24)
-        
-    </script>
+  <body>
+    <div id="nav-bar">
+      <a href="#research" id="nav-research">RESEARCH</a>
+      <a href="#oss" id="nav-oss">OPEN SOURCE</a>
+      <a href="#projects" id="nav-projects">PROJECTS</a>
+    </div>
+    <button id="switch-theme" class="circle tooltip control"></button>
+    <div id="header">
+      <img class="circle pfp" src="../static/img/pfp.png" />
+      <h1 class="pfp-title" id="title">Ananth Venkatesh</h1>
+      <p class="subtitle" id="title-subtitle">Portfolio</p>
+    </div>
+    <div id="supplement">
+      <p>
+        <img class="icon" src="../static/img/gh.png" />
+        GitHub:
+        <a
+          class="tag body-tooltip"
+          href="https://github.com/quantum9innovation"
+        >
+          @quantum9innovation
+          <span class="body-tooltip-text">Go to profile</span>
+        </a>
+      </p>
+      <p>
+        <img class="icon" src="../static/img/src.png" />
+        Source:
+        <a
+          class="body-tooltip"
+          href="https://github.com/quantum9innovation/quantum9innovation.github.io"
+        >
+          code
+          <span class="body-tooltip-text">For this page</span>
+        </a>
+      </p>
+    </div>
+    <p id="bio">
+      Hacking many things, usually in TS, Python, and sometimes R. You can
+      <a class="body-tooltip" href="#projects"
+        >keep reading
+        <span class="body-tooltip-text">Next section</span>
+      </a>
+      or go to
+      <a
+        class="body-tooltip"
+        href="https://quantum9innovation.github.io/axiom/"
+      >
+        my blog
+        <span class="body-tooltip-text">The Axiom</span> </a
+      >.
+    </p>
+    <hr />
+    <div id="intro">
+      <h2 id="projects">Projects</h2>
+      <button class="circle tooltip control" id="scroll-projects">
+        <span class="material-symbols-outlined"> arrow_downward </span>
+        <span class="tooltip-text">See projects</span>
+      </button>
+      <p>
+        These are some of the projects I've worked on, many of which are
+        <a
+          class="body-tooltip"
+          href="https://github.com/quantum9Innovation?tab=repositories&type=source"
+          >are available on GitHub
+          <span class="body-tooltip-text">See repos</span>
+        </a>
+        as open-source projects. On GitHub, I'm a member of the core
+        <a
+          target="_blank"
+          rel="noopener noreferrer"
+          class="body-tooltip"
+          href="https://github.com/epispot"
+          >epispot
+          <span class="body-tooltip-text">@epispot</span>
+        </a>
+        team, which models infectious diseases with mathematical models, and the
+        <a
+          target="_blank"
+          rel="noopener noreferrer"
+          class="body-tooltip"
+          href="https://github.com/Team-1280"
+          >Team 1280
+          <span class="body-tooltip-text">@Team-1280</span>
+        </a>
+        organization.
+      </p>
+    </div>
+    <div id="content">
+      <div class="card">
+        <a
+          target="_blank"
+          rel="noopener noreferrer"
+          href="https://github.com/quantum9Innovation/proto/blob/main/docs/usage.md"
+          ><img class="cover" src="../static/img/proto.png"
+        /></a>
+        <h2>Proto</h2>
+        <img class="icon" src="../static/img/gh.png" />
+        <a
+          target="_blank"
+          rel="noopener noreferrer"
+          class="tag"
+          href="https://github.com/quantum9innovation/proto"
+        >
+          GitHub
+        </a>
+        <br />
+        <img class="icon" src="../static/img/doc.png" />
+        <a
+          target="_blank"
+          rel="noopener noreferrer"
+          class="tag"
+          href="https://github.com/quantum9Innovation/proto/blob/main/docs/philosophy.md"
+        >
+          Technical overview
+        </a>
+        <br />
+        <img class="icon" src="../static/img/doc.png" />
+        <a
+          target="_blank"
+          rel="noopener noreferrer"
+          class="tag"
+          href="https://github.com/quantum9Innovation/proto/blob/main/docs/usage.md"
+        >
+          Manual
+        </a>
+        <p>
+          Proto is a universal, open-source toolset for learning new languages.
+          It contains numerous tools for studying languages effectively and is
+          completely open-source. It uses a custom spaced-repetition algorithm
+          to prioritize vocabulary recall and integrates user-defined grammar
+          properties into vocabulary flashcards. As almost any part of the
+          application can be highly customized, Proto can easily be used to
+          study a wide variety of different languages without any formal course
+          framework.
+        </p>
+      </div>
+      <div class="card">
+        <a
+          target="_blank"
+          rel="noopener noreferrer"
+          href="https://wordle-am.vercel.app/guide/english.html"
+          ><img class="cover" src="../static/img/am.png"
+        /></a>
+        <h2>Amharic Wordle</h2>
+        <img class="icon" src="../static/img/gh.png" />
+        <a
+          target="_blank"
+          rel="noopener noreferrer"
+          class="tag"
+          href="https://github.com/quantum9innovation/wordle-am"
+        >
+          GitHub </a
+        ><br />
+        <img class="icon" src="../static/img/web.png" />
+        <a
+          target="_blank"
+          rel="noopener noreferrer"
+          class="tag"
+          href="https://wordle-am.vercel.app"
+        >
+          Website </a
+        ><br />
+        <img class="icon" src="../static/img/web.png" />
+        <a
+          target="_blank"
+          rel="noopener noreferrer"
+          class="tag"
+          href="https://wordle-am.vercel.app/guide/english.html"
+        >
+          Instructions (in English)
+        </a>
+        <p>
+          This is a version of Wordle in Amharic (also known as
+          <span class="amh">እንቆቅልሽ</span>). Each day, a new five-letter Amharic
+          word is chosen from a pool of common words, gathered by scraping words
+          from the internet and categorizing them by frequency. You can play in
+          over four different game modes and in varying levels of difficulty.
+          The game is a great way to learn both the Ge'ez script and Amharic
+          orthography.
+        </p>
+      </div>
+      <div class="card">
+        <a
+          target="_blank"
+          rel="noopener noreferrer"
+          href="https://quantum9innovation.github.io/sost/"
+          ><img class="cover" src="../static/img/3d.png"
+        /></a>
+        <h2>Sost</h2>
+        <img class="icon" src="../static/img/gh.png" />
+        <a
+          target="_blank"
+          rel="noopener noreferrer"
+          class="tag"
+          href="https://github.com/quantum9innovation/sost"
+        >
+          GitHub </a
+        ><br />
+        <img class="icon" src="../static/img/web.png" />
+        <a
+          target="_blank"
+          rel="noopener noreferrer"
+          class="tag"
+          href="https://quantum9innovation.github.io/sost/"
+        >
+          Interactive demo
+        </a>
+        <p>
+          Sost (<span class="amh">ሶስት</span>) is a 3D graphics library for the
+          web. It uses the standard HTML canvas element to render 3D objects. It
+          currently supports zoom and perspective control via linear
+          algebra-based transformations. It is intended to be used as a graphing
+          calculator (the three-dimensional counterpart to
+          <a href="#card-hulet">Hulet</a>) for interactive mathematical
+          explainers on my
+          <a
+            class="body-tooltip"
+            href="https://quantum9innovation.github.io/axiom"
+          >
+            blog
+            <span class="body-tooltip-text">The Axiom</span> </a
+          >.
+        </p>
+      </div>
+      <div id="card-hulet" class="card">
+        <a
+          target="_blank"
+          rel="noopener noreferrer"
+          href="https://quantum9innovation.github.io/hulet/"
+          ><img class="cover" src="../static/img/2d.png"
+        /></a>
+        <h2>Hulet</h2>
+        <img class="icon" src="../static/img/gh.png" />
+        <a
+          target="_blank"
+          rel="noopener noreferrer"
+          class="tag"
+          href="https://github.com/quantum9innovation/hulet"
+        >
+          GitHub </a
+        ><br />
+        <img class="icon" src="../static/img/web.png" />
+        <a
+          target="_blank"
+          rel="noopener noreferrer"
+          class="tag"
+          href="https://quantum9innovation.github.io/hulet/"
+        >
+          Interactive demo
+        </a>
+        <p>
+          Hulet (<span class="amh">ሁለት</span>) is a programmatic graphing
+          calculator for the web. It uses the standard HTML canvas element to
+          render 2D objects and can apply matrix-based transformations. I
+          frequently use it in my
+          <a
+            class="body-tooltip"
+            href="https://quantum9innovation.github.io/axiom"
+          >
+            blog
+            <span class="body-tooltip-text">The Axiom</span>
+          </a>
+          for interactive mathematical explainers. Aside from graphing
+          mathematical functions, Hulet also provides an alternative 2D graphics
+          interface for web animations and has been used in numerous other
+          applications, including physics engines and
+          <a href="#card-sim">simulators</a>.
+        </p>
+      </div>
+      <div class="card">
+        <a
+          target="_blank"
+          rel="noopener noreferrer"
+          href="https://quantum9innovation.github.io/tolo-tolo/"
+          ><img class="cover" src="../static/img/geez.jpg"
+        /></a>
+        <h2>Tolo-Tolo</h2>
+        <img class="icon" src="../static/img/gh.png" />
+        <a
+          target="_blank"
+          rel="noopener noreferrer"
+          class="tag"
+          href="https://github.com/quantum9innovation/tolo-tolo"
+        >
+          GitHub </a
+        ><br />
+        <img class="icon" src="../static/img/web.png" />
+        <a
+          target="_blank"
+          rel="noopener noreferrer"
+          class="tag"
+          href="https://quantum9innovation.github.io/tolo-tolo/"
+        >
+          Website
+        </a>
+        <p>
+          Tolo-tolo (<span class="amh">ቶሎ ቶሎ</span>) is a set of tools designed
+          to help Amharic learners with basic grammar, like verb conjugation and
+          noun modifiers. It uses an algorithm to generate a set of challenges
+          which test various grammar concepts. These exercises can accelerate
+          the early learning process and are designed to match the
+          <a
+            class="body-tooltip"
+            target="_blank"
+            rel="noopener noreferrer"
+            href="https://www.state.gov/foreign-language-training/"
+          >
+            Foreign Service Institute's
+            <span class="body-tooltip-text">See FSI courses</span>
+          </a>
+          Basic Amharic Course.
+        </p>
+      </div>
+      <div class="card">
+        <a
+          target="_blank"
+          rel="noopener noreferrer"
+          href="https://github.com/quantum9Innovation/zing"
+          ><img class="cover" src="../static/img/zing.png"
+        /></a>
+        <h2>Zing</h2>
+        <img class="icon" src="../static/img/gh.png" />
+        <a
+          target="_blank"
+          rel="noopener noreferrer"
+          class="tag"
+          href="https://github.com/quantum9innovation/zing"
+        >
+          GitHub
+        </a>
+        <p>
+          Zing is a very simple teleprompter that automatically splits up long
+          texts into short fragments that are easier to read. It an intuitive
+          user interface with adjustable speed so it automatically tracks your
+          reading progress. It is particularly helpful for rehearsing long
+          speeches with time constraints or to use in moderated discussions.
+        </p>
+      </div>
+      <div class="card">
+        <a
+          target="_blank"
+          rel="noopener noreferrer"
+          href="https://quantum9innovation.github.io/ny-games/letter-cubed/english"
+          ><img class="cover" src="../static/img/ny.png"
+        /></a>
+        <h2>NYT Word Games</h2>
+        <img class="icon" src="../static/img/gh.png" />
+        <a
+          target="_blank"
+          rel="noopener noreferrer"
+          class="tag"
+          href="https://github.com/quantum9innovation/ny-games"
+        >
+          GitHub
+        </a>
+        <br />
+        <img class="icon" src="../static/img/web.png" />
+        <a
+          target="_blank"
+          rel="noopener noreferrer"
+          class="tag"
+          href="https://quantum9innovation.github.io/ny-games/letter-cubed/english"
+        >
+          Website
+        </a>
+        <p>
+          This is an attempt to recreate many of the popular New York Times word
+          games and re-release them under permissive open-source licenses. It
+          currently contains an English version of "Letter Boxed," which is a 3D
+          variant of the
+          <a
+            target="_blank"
+            rel="noopener noreferrer"
+            class="body-tooltip"
+            href="https://www.nytimes.com/puzzles/letter-boxed"
+          >
+            original game
+            <span class="body-tooltip-text">See on NYT</span> </a
+          >. All the recreated games are free to play without any subscription.
+        </p>
+      </div>
+    </div>
+    <hr />
+    <div id="oss">
+      <h2>Open Source Contributions</h2>
+      <button class="circle tooltip control" id="scroll-oss">
+        <span class="material-symbols-outlined"> arrow_downward </span>
+        <span class="tooltip-text">See repos</span>
+      </button>
+      <p>
+        The following are some of the projects I've contributed to on GitHub.
+        They include those in the
+        <a
+          target="_blank"
+          rel="noopener noreferrer"
+          class="tag body-tooltip"
+          href="https://github.com/epispot"
+        >
+          @epispot
+          <span class="body-tooltip-text">See GitHub</span>
+        </a>
+        and
+        <a
+          target="_blank"
+          rel="noopener noreferrer"
+          class="tag body-tooltip"
+          href="https://github.com/team-1280"
+        >
+          @Team-1280
+          <span class="body-tooltip-text">See GitHub</span>
+        </a>
+        GitHub organizations, as well as some other community projects.
+      </p>
+    </div>
+    <div id="oss-content">
+      <div class="card">
+        <a
+          target="_blank"
+          rel="noopener noreferrer"
+          href="https://github.com/epispot/epispot"
+          ><img class="cover" src="../static/img/epi.png"
+        /></a>
+        <h2>
+          <a
+            target="_blank"
+            rel="noopener noreferrer"
+            href="https://github.com/epispot/epispot"
+            >epispot/epispot</a
+          >
+        </h2>
+        <p>
+          Epispot is a Python package for the mathematical modeling of
+          infectious diseases via compartmental models. Epispot can be adapted
+          for almost any type of modeling scenario and can be easily configured
+          to run local analyses of specific diseases. It has been used in
+          various related projects to analyze and predict the spread of the
+          COVID-19 virus.
+        </p>
+      </div>
+      <div class="card">
+        <a
+          target="_blank"
+          rel="noopener noreferrer"
+          href="https://github.com/epispot/covid-notebook"
+          ><img class="cover" src="../static/img/covid.png"
+        /></a>
+        <h2>
+          <a
+            target="_blank"
+            rel="noopener noreferrer"
+            href="https://github.com/epispot/covid-notebook"
+            >epispot/covid-notebook</a
+          >
+        </h2>
+        <p>
+          This is an interactive notebook for examining trends in COVID-19
+          cases, which
+          <a
+            target="_blank"
+            rel="noopener noreferrer"
+            class="body-tooltip"
+            href="https://desaulnier.house.gov/media-center/press-releases/congressman-desaulnier-announces-2022-congressional-app-challenge-0"
+          >
+            won third place in the 2022 Congressional App Challenge.
+            <span class="body-tooltip-text">See the announcement</span>
+          </a>
+          It gathers local data from various sources and generates predictions
+          of the future spread of COVID-19 at the local level. It includes data
+          from every county in the United States and some districts in Puerto
+          Rico and other US territories.
+        </p>
+      </div>
+      <div id="card-sim" class="card">
+        <a
+          target="_blank"
+          rel="noopener noreferrer"
+          href="https://team-1280.github.io/Driving-Simulator/"
+          ><img class="cover" src="../static/img/sim.png"
+        /></a>
+        <h2>
+          <a
+            target="_blank"
+            rel="noopener noreferrer"
+            href="https://github.com/Team-1280/Driving-Simulator"
+            >Team-1280/Driving-Simulator</a
+          >
+        </h2>
+        <p>
+          This is a driving simulator for non-holonomic drivetrains (driving
+          mechanisms that are not omnidirectional) used in the
+          <a
+            target="_blank"
+            rel="noopener noreferrer"
+            class="body-tooltip"
+            href="https://www.firstinspires.org/robotics/frc"
+          >
+            FIRST Robotics Competition
+            <span class="body-tooltip-text">What is this?</span> </a
+          >. It simulates the kinematics of the drivetrain and allows previewing
+          various control strategies before teams fully assemble a drivebase to
+          test on. You can preview one of the simulations in
+          <a
+            class="body-tooltip"
+            href="https://team-1280.github.io/Driving-Simulator/"
+          >
+            this demonstration
+            <span class="body-tooltip-text">Go to site</span> </a
+          >.
+        </p>
+      </div>
+    </div>
+    <hr />
+    <div id="research">
+      <h2>Research</h2>
+      <button class="circle tooltip control" id="scroll-research">
+        <span class="material-symbols-outlined"> arrow_downward </span>
+        <span class="tooltip-text">View work</span>
+      </button>
+      <p>
+        The following are some of the main research projects I've worked on and
+        a preview of some of their results. Most center around my work on the
+        <a
+          target="_blank"
+          rel="noopener noreferrer"
+          class="tag body-tooltip"
+          href="https://coronasurveys.org"
+        >
+          CoronaSurveys Project
+          <span class="body-tooltip-text">See site</span> </a
+        >, an
+        <a
+          target="_blank"
+          rel="noopener noreferrer"
+          class="tag body-tooltip"
+          href="https://github.com/GCGImdea/coronasurveys"
+        >
+          international initiative
+          <span class="body-tooltip-text">See GitHub</span>
+        </a>
+        to track COVID-19 via indirect surveys.
+      </p>
+    </div>
+    <div id="research-content">
+      <div class="card">
+        <a
+          target="_blank"
+          rel="noopener noreferrer"
+          href="https://coronasurveys.org/data/"
+          ><img class="cover" src="../static/img/surveys.png"
+        /></a>
+        <h2>Processing COVID-19 survey data</h2>
+        <p>
+          The CoronaSurveys project utilized thousands of daily regional surveys
+          to generate national estimates. I developed various scripts (e.g.
+          <a
+            target="_blank"
+            rel="noopener noreferrer"
+            class="tag body-tooltip"
+            href="https://github.com/GCGImdea/coronasurveys/blob/master/code/script-nsum-country-region-2.R"
+          >
+            generating national data from regional estimates
+            <span class="body-tooltip-text">See GitHub source</span>
+          </a>
+          ) that process data from various geographical areas and merge them
+          based on populations, responses received, and other variables. The
+          results can be seen in the
+          <a
+            target="_blank"
+            rel="noopener noreferrer"
+            class="tag body-tooltip"
+            href="https://coronasurveys.org/data/"
+          >
+            main CoronaSurveys dataset
+            <span class="body-tooltip-text">See graphs</span> </a
+          >, which is generated daily using these scripts.
+        </p>
+      </div>
+      <div class="card">
+        <a
+          target="_blank"
+          rel="noopener noreferrer"
+          href="https://github.com/quantum9Innovation/covid-maps"
+          ><img class="cover" src="../static/img/map.png"
+        /></a>
+        <h2>Mapping the spread of COVID-19</h2>
+        <p>
+          I created various international maps of the spread of COVID-19 at both
+          the regional and national level.
+          <a
+            target="_blank"
+            rel="noopener noreferrer"
+            class="tag body-tooltip"
+            href="https://github.com/quantum9Innovation/covid-maps"
+          >
+            This repository
+            <span class="body-tooltip-text">See GitHub</span>
+          </a>
+          contains scripts for fetching the latest data from the CoronaSurveys
+          dataset and displaying it in various formats, using Plotly. It will
+          automatically use the most recent survey responses for each region and
+          thereby provides an accessible way to track COVID-19 hotspots using
+          independent measurements of its spread (
+          <a
+            target="_blank"
+            rel="noopener noreferrer"
+            class="tag body-tooltip"
+            href="https://arxiv.org/abs/2005.12783"
+          >
+            not provided by official figures
+            <span class="body-tooltip-text">See whitepaper</span>
+          </a>
+          ).
+        </p>
+      </div>
+      <div class="card">
+        <a
+          target="_blank"
+          rel="noopener noreferrer"
+          href="https://github.com/quantum9Innovation/ons-coronasurveys"
+          ><img class="cover" src="../static/img/comp.png"
+        /></a>
+        <h2>Corroborating CoronaSurveys data</h2>
+        <p>
+          To corroborate the results of the CoronaSurveys project, which
+          independently tracked COVID-19 without relying on official figures, I
+          used data from the
+          <a
+            target="_blank"
+            rel="noopener noreferrer"
+            class="tag body-tooltip"
+            href="https://www.ons.gov.uk/peoplepopulationandcommunity/healthandsocialcare/conditionsanddiseases/bulletins/coronaviruscovid19infectionsurveypilot/previousReleases"
+          >
+            Office of National Statistics
+            <span class="body-tooltip-text">See datasets</span> </a
+          >, which tracked COVID-19 in the UK using a similar survey-based
+          technique, and matched the predicted number of infected individuals
+          with the data from the CoronaSurveys project over the same time
+          period. I found general correlations between the two datasets, though
+          work is still ongoing to confirm these correlations in other datasets
+          (particularly in areas outside the UK).
+        </p>
+      </div>
+    </div>
+    <div id="footer">
+      <button class="circle tooltip control" id="scroll-top">
+        <span class="material-symbols-outlined"> arrow_upward </span>
+        <span class="tooltip-text">Back to top</span>
+      </button>
+    </div>
+  </body>
 </html>

@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html>
+    <head>
+
+      <meta charset="utf-8">
+      <title>MNIST VAE for Zeros</title>
+
+      <link rel="shortcut icon" href="https://i.ibb.co/PNGBS6s/download.png">
+      <meta name="google-site-verification" content="4LABIwyIU1unRNF-wGgB8a4xoVDKsYwJduYnGAARMYY" />
+
+    </head>
+    <style>
+
+        body {
+            
+            margin: 0px;
+            overflow: hidden
+                
+        }
+
+    </style>
+    <body>
+
+        <canvas id="me" >
+            
+            Use a modern browser to explore this visualization
+        
+        </canvas>
+
+    </body>
+    <script src="data.js" ></script>
+    <script src="code.js" ></script>
+    <script>
+
+        var c = document.getElementById("me").getContext("2d")
+        c.canvas.width = window.innerWidth;
+        c.canvas.height = window.innerHeight;
+        
+        var w = c.canvas.width
+        var h = c.canvas.height
+        var s = Math.min(w, h)
+        
+        
+        //activation function
+        var sigmoid = function(z)
+        {
+
+          for ( var i = 0; i < z.length; i++ )
+          {
+
+            z[i] = 1/(1+Math.exp(-z[i]))
+
+          }
+
+          return z
+
+        }
+
+        //2d dot product
+        var dot = function (w, a)
+        {
+
+          var vec = []
+
+          for ( var i = 0; i < w.length; i++ )
+          {
+
+            var sum = 0
+
+            for ( var e = 0; e < a.length; e++ )
+            {
+
+              sum+=parseFloat(w[i][e])*a[e]
+
+            }
+
+            vec.push(sum)
+
+          }
+
+          return vec
+
+        }
+
+        //add 2 matrices together
+        var add = function (m1, m2)
+        {
+
+          for ( var i = 0; i < m1.length; i++ )
+          {
+
+            m1[i] = m1[i]+parseFloat(m2[i])
+
+          }
+
+          return m1
+
+        };
+
+        //feedforward method
+        var feedforward = function(a, data)
+        {
+
+          /*
+              Takes the dot product of each row (neuron)
+              of each layer to arrive at the final result.
+          */
+
+          //matrix multiplication
+          for ( var i = 0; i < data.biases.length; i++ )
+          {
+
+              a = sigmoid(add(dot(data.weights[i], a), data.biases[i]))
+
+          }
+
+          return a
+
+        }
+
+
+        
+        var arr = []
+        
+        for ( var i = 0; i < 30; i++ ){
+            
+            arr.push(Math.random())
+            
+        }
+        
+        var out = feedforward(arr, data)
+        
+        
+        var size = 5
+        var maxSize = size*28
+        
+        for ( var i = 0; i < 784; i++ ) {
+            
+            c.fillStyle = "rgb("+255*out[i]+","+255*out[i]+","+255*out[i]+")"
+            var xPos = Math.floor(w/2-maxSize/2+size*(i-28*Math.floor(i/28)))
+            var yPos = Math.floor(h/2-3*maxSize/2+size*(Math.floor(i/28)))
+            c.fillRect(xPos, yPos, size, size)
+            
+        }
+        
+
+        c.fillStyle = "rgb(0, 0, 0)"
+        c.font = "12px Arial"
+        c.textAlign = "center"
+        c.fillText("Zeros made from a [hacked] variational autoencoder using the MNIST dataset", w/2, h/2)
+        c.fillText("See quantum9Innovation/Neural-Network-Frameworks on Github", w/2, h/2+24)
+        
+    </script>
+</html>
