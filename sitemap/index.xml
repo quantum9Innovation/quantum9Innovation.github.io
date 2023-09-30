@@ -1,7 +1,7 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.sitemaps.org/schemas/sitemap/0.9 http://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd">
 <url>
 <loc>https://quantum9innovation.github.io/</loc>
-<lastmod>2019-11-10T01:04:53+00:00</lastmod>
+<lastmod>2023-9-30T012:00:00+00:00</lastmod>
 <priority>1.00</priority>
 </url>
 <url>
@@ -59,5 +59,11 @@ https://quantum9innovation.github.io/amharic/flashcards/
 <lastmod>2020-12-10T01:04:20+00:00</lastmod>
 <priority>0.50</priority>
 </url>
+<url>
+<loc>
+https://quantum9innovation.github.io/mnist/
+</loc>
+<lastmod>2023-9-30T012:00:00+00:00</lastmod>
+<priority>0.50</priority>
 </url>
 </urlset>
