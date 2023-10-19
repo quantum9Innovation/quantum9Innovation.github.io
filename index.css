@@ -193,6 +193,11 @@ button:hover {
   background: linear-gradient(45deg, var(--accent-3), var(--button));
 }
 
+/* summaries */
+.after {
+  margin-top: var(--sep-small);
+}
+
 /* tooltip */
 /* tooltip container */
 .tooltip {
@@ -401,7 +406,7 @@ button:hover {
 
 /* bio snippet */
 #bio {
-  margin-top: var(--sep-medium);
+  margin-top: var(--sep-small);
   margin-bottom: var(--sep-medium);
   margin-left: calc(var(--size-small) + var(--pad-small));
 }
